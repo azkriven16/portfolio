@@ -71,6 +71,9 @@ jobs:
 
       - name: Build
         run: pnpm opennextjs-cloudflare build
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_PROD_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_PROD_ANON_KEY }}
 
       - name: Deploy to Cloudflare (production)
         run: pnpm wrangler deploy --env production
@@ -79,4 +82,4 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Print Preview URL
-        run: echo "🚀 Prod URL → https://euger.${{ secrets.CLOUDFLARE_SUBDOMAIN }}.workers.dev"
+        run: echo "🚀 Prod URL → https://euger.euger.workers.dev"
