@@ -82,4 +82,4 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Print Preview URL
-        run: echo "🚀 Dev URL → https://euger-dev.${{ secrets.CLOUDFLARE_SUBDOMAIN }}.workers.dev"
+        run: echo "🚀 Dev URL → https://euger-dev.euger.workers.dev"
