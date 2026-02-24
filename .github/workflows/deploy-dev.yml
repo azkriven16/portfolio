@@ -17,7 +17,9 @@ jobs:
           version: latest
 
       - name: Push migrations to dev
-        run: supabase db push --project-ref ${{ secrets.SUPABASE_DEV_PROJECT_REF }} --password ${{ secrets.SUPABASE_DEV_DB_PASSWORD }}
+        run: |
+          ENCODED_PASSWORD=$(python3 -c "import urllib.parse; print(urllib.parse.quote('${{ secrets.SUPABASE_DEV_DB_PASSWORD }}'))")
+          supabase db push --db-url "postgresql://postgres.${{ secrets.SUPABASE_DEV_PROJECT_REF }}:${ENCODED_PASSWORD}@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"
 
   deploy-worker:
     name: Deploy Cloudflare Worker (Dev)
