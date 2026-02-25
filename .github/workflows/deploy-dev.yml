@@ -11,22 +11,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: pnpm/action-setup@v4
         with:
           version: latest
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
-
       - name: Install dependencies
         run: pnpm install
-
       - name: Type check
         run: pnpm tsc --noEmit
-
       - name: Lint
         run: pnpm lint
 
@@ -36,11 +31,9 @@ jobs:
     needs: checks
     steps:
       - uses: actions/checkout@v4
-
       - uses: supabase/setup-cli@v1
         with:
           version: latest
-
       - name: Push migrations to dev
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
@@ -56,32 +49,24 @@ jobs:
     needs: deploy-db
     steps:
       - uses: actions/checkout@v4
-
       - uses: pnpm/action-setup@v4
         with:
           version: latest
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
-
       - name: Install dependencies
         run: pnpm install
-
       - name: Build
         run: pnpm opennextjs-cloudflare build
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_DEV_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_DEV_ANON_KEY }}
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_DEV_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_DEV_ANON_KEY }}
-
       - name: Deploy to Cloudflare (dev)
         run: pnpm wrangler deploy --env dev
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-
       - name: Print Preview URL
         run: echo "🚀 Dev URL → https://euger-dev.euger.workers.dev"
