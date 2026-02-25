@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import dynamic from "next/dynamic";
 
 const Editor = dynamic(() => import("@/components/Editor"), { ssr: false });
@@ -18,12 +21,44 @@ export default function NewBlogPage() {
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [published, setPublished] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    async function checkRole() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+      setIsAdmin(data?.role === "admin");
+    }
+    checkRole();
+  }, []);
+
   function handleTitleChange(value: string) {
     setTitle(value);
-    setSlug(value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""));
+    setSlug(
+      value
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "")
+    );
+  }
+
+  function handleTagsChange(value: string) {
+    const parts = value.split(",");
+    // Deduplicate all completed tags (everything except what's currently being typed)
+    const completed = parts
+      .slice(0, -1)
+      .map((t) => t.trim().toLowerCase())
+      .filter(Boolean);
+    const unique = [...new Set(completed)];
+    const current = parts[parts.length - 1]; // still being typed, don't touch it
+    setTags([...unique, current].join(", "));
   }
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -43,7 +78,6 @@ export default function NewBlogPage() {
 
     let image_url = null;
 
-    // Upload image if provided
     if (image) {
       const ext = image.name.split(".").pop();
       const filename = `${user.id}/${Date.now()}.${ext}`;
@@ -63,14 +97,14 @@ export default function NewBlogPage() {
       image_url = urlData.publicUrl;
     }
 
-    // Save blog
     const { error: insertError } = await supabase.from("blogs").insert({
       title,
       slug,
       content,
       image_url,
-      tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
-      published,
+      // Deduplicate + lowercase as a final safety net on submit
+      tags: [...new Set(tags.split(",").map((t) => t.trim().toLowerCase()).filter(Boolean))],
+      published: isAdmin ? published : false,
       author_id: user.id,
     });
 
@@ -87,76 +121,90 @@ export default function NewBlogPage() {
     <main className="max-w-3xl mx-auto p-8">
       <h1 className="text-2xl font-bold mb-6">New Blog Post</h1>
 
-      {error && <p className="mb-4 text-sm text-red-500">{error}</p>}
+      {error && (
+        <div className="text-sm text-destructive bg-destructive/10 px-3 py-2 rounded-md mb-4">
+          {error}
+        </div>
+      )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Title</label>
-          <input
-            type="text"
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-2">
+          <Label htmlFor="title">Title</Label>
+          <Input
+            id="title"
             value={title}
             onChange={(e) => handleTitleChange(e.target.value)}
-            className="w-full border border-gray-300 rounded p-2"
+            placeholder="My awesome post"
             required
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Slug</label>
-          <input
-            type="text"
+        <div className="space-y-2">
+          <Label htmlFor="slug">Slug</Label>
+          <Input
+            id="slug"
             value={slug}
             onChange={(e) => setSlug(e.target.value)}
-            className="w-full border border-gray-300 rounded p-2 bg-gray-50"
+            placeholder="my-awesome-post"
+            className="bg-muted"
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Cover Image</label>
-          <input
+        <div className="space-y-2">
+          <Label htmlFor="image">Cover Image</Label>
+          <Input
+            id="image"
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            className="w-full border border-gray-300 rounded p-2"
           />
           {imagePreview && (
-            <img src={imagePreview} alt="Preview" className="mt-2 h-40 object-cover rounded" />
+            <img
+              src={imagePreview}
+              alt="Preview"
+              className="mt-2 h-40 w-full object-cover rounded-lg"
+            />
           )}
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Tags (comma separated)</label>
-          <input
-            type="text"
+        <div className="space-y-2">
+          <Label htmlFor="tags">Tags</Label>
+          <Input
+            id="tags"
             value={tags}
-            onChange={(e) => setTags(e.target.value)}
+            onChange={(e) => handleTagsChange(e.target.value)}
             placeholder="nextjs, typescript, cloudflare"
-            className="w-full border border-gray-300 rounded p-2"
           />
+          <p className="text-xs text-muted-foreground">Comma separated — duplicates are removed automatically</p>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Content</label>
+        <div className="space-y-2">
+          <Label>Content</Label>
           <Editor content={content} onChange={setContent} />
         </div>
 
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id="published"
-            checked={published}
-            onChange={(e) => setPublished(e.target.checked)}
-          />
-          <label htmlFor="published" className="text-sm">Publish immediately</label>
-        </div>
+        {isAdmin ? (
+          <div className="flex items-center gap-2 border rounded-lg p-3">
+            <input
+              type="checkbox"
+              id="published"
+              checked={published}
+              onChange={(e) => setPublished(e.target.checked)}
+              className="rounded"
+            />
+            <label htmlFor="published" className="text-sm font-medium">
+              Publish immediately
+            </label>
+          </div>
+        ) : (
+          <div className="text-sm text-muted-foreground bg-muted px-3 py-2 rounded-md">
+            ✏️ Your post will be saved as a draft. Only admins can publish posts.
+          </div>
+        )}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-black text-white rounded p-2 disabled:opacity-50"
-        >
+        <Button type="submit" className="w-full" disabled={loading}>
           {loading ? "Saving..." : "Save Blog Post"}
-        </button>
+        </Button>
       </form>
     </main>
   );
