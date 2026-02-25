@@ -1,5 +1,4 @@
-export const runtime = "edge";
-
+// src/proxy.ts - remove the runtime export line
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
