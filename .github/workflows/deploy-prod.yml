@@ -72,8 +72,8 @@ jobs:
       - name: Build
         run: pnpm opennextjs-cloudflare build
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_PROD_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_PROD_ANON_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_PROD_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_PROD_ANON_KEY }}
 
       - name: Deploy to Cloudflare (production)
         run: pnpm wrangler deploy --env production
