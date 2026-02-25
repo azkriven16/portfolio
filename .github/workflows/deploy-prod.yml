@@ -48,6 +48,7 @@ jobs:
           PROJECT_REF: ${{ secrets.SUPABASE_PROD_PROJECT_REF }}
         run: |
           supabase link --project-ref "$PROJECT_REF"
+          supabase migration repair --status applied 20260225051007 --project-ref "$PROJECT_REF"
           supabase db push --linked --password "$DB_PASSWORD"
 
   deploy-worker:
