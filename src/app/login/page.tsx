@@ -2,40 +2,77 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { createClient } from "@/lib/supabase/client";
+import {
+  loginSchema,
+  signupSchema,
+  type LoginFormData,
+  type SignupFormData,
+} from "@/types/auth";
 
 export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"author" | "reader">("reader");
-  const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<"login" | "signup">("login");
+  const [role, setRole] = useState<"author" | "reader">("reader");
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [serverMessage, setServerMessage] = useState<string | null>(null);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setMessage(null);
+  const loginForm = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "" },
+  });
 
-    if (mode === "login") {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) { setError(error.message); setLoading(false); return; }
-      router.push("/dashboard");
-      router.refresh();
-    } else {
-      const { data, error } = await supabase.auth.signUp({ email, password });
-      if (error) { setError(error.message); setLoading(false); return; }
-      if (data.user) {
-        await supabase.from("profiles").update({ role }).eq("id", data.user.id);
-      }
-      setMessage("Check your email to confirm your account!");
-      setLoading(false);
+  const signupForm = useForm<SignupFormData>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: { email: "", password: "", role: "reader" },
+  });
+
+  const isSubmitting =
+    mode === "login"
+      ? loginForm.formState.isSubmitting
+      : signupForm.formState.isSubmitting;
+
+  async function onLogin(data: LoginFormData) {
+    setServerError(null);
+    const { error } = await supabase.auth.signInWithPassword(data);
+    if (error) {
+      setServerError(error.message);
+      return;
     }
+    router.push("/dashboard");
+    router.refresh();
+  }
+
+  async function onSignup(data: SignupFormData) {
+    setServerError(null);
+    setServerMessage(null);
+    const { data: authData, error } = await supabase.auth.signUp({
+      email: data.email,
+      password: data.password,
+    });
+    if (error) {
+      setServerError(error.message);
+      return;
+    }
+    if (authData.user) {
+      await supabase
+        .from("profiles")
+        .update({ role })
+        .eq("id", authData.user.id);
+    }
+    setServerMessage("Check your email to confirm your account!");
+  }
+
+  function switchMode() {
+    setMode(mode === "login" ? "signup" : "login");
+    setServerError(null);
+    setServerMessage(null);
+    loginForm.reset();
+    signupForm.reset();
   }
 
   return (
@@ -52,18 +89,11 @@ export default function LoginPage() {
         }
 
         @media (max-width: 768px) {
-          .login-root {
-            grid-template-columns: 1fr;
-          }
-          .login-panel-left {
-            display: none !important;
-          }
-          .login-panel-right {
-            padding: 2rem !important;
-          }
+          .login-root { grid-template-columns: 1fr; }
+          .login-panel-left { display: none !important; }
+          .login-panel-right { padding: 2rem !important; }
         }
 
-        /* ── Left panel ── */
         .login-panel-left {
           position: relative;
           overflow: hidden;
@@ -90,7 +120,6 @@ export default function LoginPage() {
           100% { opacity: 1;   transform: scale(1.05); }
         }
 
-        /* Grid lines */
         .login-panel-left::after {
           content: '';
           position: absolute;
@@ -130,10 +159,7 @@ export default function LoginPage() {
           font-weight: 700;
         }
 
-        .left-headline em {
-          font-style: italic;
-          color: #d4af64;
-        }
+        .left-headline em { font-style: italic; color: #d4af64; }
 
         .left-sub {
           font-size: 0.9rem;
@@ -151,24 +177,20 @@ export default function LoginPage() {
           opacity: 0.6;
         }
 
-        /* Floating badge */
         .left-badge {
           position: absolute;
-          top: 3rem;
-          left: 3rem;
+          top: 3rem; left: 3rem;
           z-index: 3;
           font-family: 'Playfair Display', serif;
           font-size: 1.1rem;
           color: #f5f0e8;
-          letter-spacing: 0.02em;
           display: flex;
           align-items: center;
           gap: 0.5rem;
         }
 
         .left-badge-dot {
-          width: 6px;
-          height: 6px;
+          width: 6px; height: 6px;
           border-radius: 50%;
           background: #d4af64;
           animation: blink 2.5s ease-in-out infinite;
@@ -176,10 +198,9 @@ export default function LoginPage() {
 
         @keyframes blink {
           0%, 100% { opacity: 1; }
-          50%       { opacity: 0.3; }
+          50% { opacity: 0.3; }
         }
 
-        /* Decorative circles */
         .deco-ring {
           position: absolute;
           border-radius: 50%;
@@ -187,24 +208,10 @@ export default function LoginPage() {
           pointer-events: none;
         }
 
-        .deco-ring-1 {
-          width: 320px; height: 320px;
-          top: -80px; right: -80px;
-        }
+        .deco-ring-1 { width: 320px; height: 320px; top: -80px; right: -80px; }
+        .deco-ring-2 { width: 200px; height: 200px; top: 0; right: -20px; border-color: rgba(212,175,100,0.08); }
+        .deco-ring-3 { width: 500px; height: 500px; bottom: -200px; left: -150px; border-color: rgba(212,175,100,0.05); }
 
-        .deco-ring-2 {
-          width: 200px; height: 200px;
-          top: 0px; right: -20px;
-          border-color: rgba(212,175,100,0.08);
-        }
-
-        .deco-ring-3 {
-          width: 500px; height: 500px;
-          bottom: -200px; left: -150px;
-          border-color: rgba(212,175,100,0.05);
-        }
-
-        /* ── Right panel ── */
         .login-panel-right {
           background: #f5f0e8;
           display: flex;
@@ -253,7 +260,6 @@ export default function LoginPage() {
           font-weight: 300;
         }
 
-        /* Feedback banners */
         .feedback-error {
           font-size: 0.8rem;
           color: #b03a2e;
@@ -274,10 +280,7 @@ export default function LoginPage() {
           margin-bottom: 1.25rem;
         }
 
-        /* Field group */
-        .field-group {
-          margin-bottom: 1.25rem;
-        }
+        .field-group { margin-bottom: 1.25rem; }
 
         .field-label {
           display: block;
@@ -304,15 +307,16 @@ export default function LoginPage() {
           box-sizing: border-box;
         }
 
-        .field-input::placeholder {
-          color: #b0a898;
+        .field-input::placeholder { color: #b0a898; }
+        .field-input:focus { border-bottom-color: #d4af64; }
+        .field-input.error { border-bottom-color: #b03a2e; }
+
+        .field-error {
+          font-size: 0.72rem;
+          color: #b03a2e;
+          margin-top: 0.35rem;
         }
 
-        .field-input:focus {
-          border-bottom-color: #d4af64;
-        }
-
-        /* Role selector */
         .role-label {
           display: block;
           font-size: 0.7rem;
@@ -340,44 +344,14 @@ export default function LoginPage() {
           font-family: 'DM Sans', sans-serif;
         }
 
-        .role-card:hover {
-          border-color: #d4af64;
-        }
+        .role-card:hover { border-color: #d4af64; }
+        .role-card.active { border-color: #d4af64; background: rgba(212,175,100,0.07); }
+        .role-card-title { font-size: 0.85rem; font-weight: 500; color: #0d0d0d; display: block; margin-bottom: 0.2rem; }
+        .role-card-desc { font-size: 0.72rem; color: #7a6e5e; font-weight: 300; }
 
-        .role-card.active {
-          border-color: #d4af64;
-          background: rgba(212,175,100,0.07);
-        }
+        .form-divider { display: flex; align-items: center; margin: 2rem 0; }
+        .form-divider-line { flex: 1; height: 1px; background: #d9d3c9; }
 
-        .role-card-title {
-          font-size: 0.85rem;
-          font-weight: 500;
-          color: #0d0d0d;
-          display: block;
-          margin-bottom: 0.2rem;
-        }
-
-        .role-card-desc {
-          font-size: 0.72rem;
-          color: #7a6e5e;
-          font-weight: 300;
-        }
-
-        /* Divider */
-        .form-divider {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          margin: 2rem 0;
-        }
-
-        .form-divider-line {
-          flex: 1;
-          height: 1px;
-          background: #d9d3c9;
-        }
-
-        /* Submit button */
         .submit-btn {
           width: 100%;
           background: #0d0d0d;
@@ -405,34 +379,13 @@ export default function LoginPage() {
           transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
         }
 
-        .submit-btn:hover::after {
-          transform: translateX(0);
-        }
+        .submit-btn:hover::after { transform: translateX(0); }
+        .submit-btn:hover { color: #0d0d0d; }
+        .submit-btn span { position: relative; z-index: 1; }
+        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .submit-btn:disabled::after { display: none; }
 
-        .submit-btn:hover {
-          color: #0d0d0d;
-        }
-
-        .submit-btn span {
-          position: relative;
-          z-index: 1;
-        }
-
-        .submit-btn:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-
-        .submit-btn:disabled::after {
-          display: none;
-        }
-
-        /* Toggle mode */
-        .mode-toggle {
-          font-size: 0.8rem;
-          color: #7a6e5e;
-          text-align: center;
-        }
+        .mode-toggle { font-size: 0.8rem; color: #7a6e5e; text-align: center; }
 
         .mode-toggle button {
           background: none;
@@ -447,36 +400,35 @@ export default function LoginPage() {
           padding: 0;
         }
 
-        .mode-toggle button:hover {
-          color: #d4af64;
-        }
+        .mode-toggle button:hover { color: #d4af64; }
       `}</style>
 
       <div className="login-root">
-        {/* ── Left panel ── */}
+        {/* Left panel */}
         <div className="login-panel-left">
           <div className="deco-ring deco-ring-1" />
           <div className="deco-ring deco-ring-2" />
           <div className="deco-ring deco-ring-3" />
-
           <div className="left-badge">
             <span className="left-badge-dot" />
             Euger
           </div>
-
           <div className="left-content">
             <p className="left-eyebrow">Portfolio & Blog</p>
-            <h1 className="login-panel-left-headline left-headline">
-              Where <em>ideas</em><br />find their voice.
+            <h1 className="left-headline">
+              Where <em>ideas</em>
+              <br />
+              find their voice.
             </h1>
             <div className="left-divider" />
             <p className="left-sub">
-              A space for long-form writing, project showcases, and thoughts worth sharing with the world.
+              A space for long-form writing, project showcases, and thoughts
+              worth sharing with the world.
             </p>
           </div>
         </div>
 
-        {/* ── Right panel ── */}
+        {/* Right panel */}
         <div className="login-panel-right">
           <div className="form-wrap">
             <p className="form-eyebrow">
@@ -491,87 +443,154 @@ export default function LoginPage() {
                 : "Choose your role and join the community"}
             </p>
 
-            {error && <div className="feedback-error">{error}</div>}
-            {message && <div className="feedback-success">{message}</div>}
+            {serverError && <div className="feedback-error">{serverError}</div>}
+            {serverMessage && (
+              <div className="feedback-success">{serverMessage}</div>
+            )}
 
-            <form onSubmit={handleSubmit}>
-              <div className="field-group">
-                <label className="field-label" htmlFor="email">Email address</label>
-                <input
-                  id="email"
-                  className="field-input"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  autoComplete="email"
-                />
-              </div>
+            {mode === "login" ? (
+              <form onSubmit={loginForm.handleSubmit(onLogin)}>
+                <div className="field-group">
+                  <label className="field-label" htmlFor="login-email">
+                    Email address
+                  </label>
+                  <input
+                    id="login-email"
+                    type="email"
+                    placeholder="you@example.com"
+                    autoComplete="email"
+                    className={`field-input ${loginForm.formState.errors.email ? "error" : ""}`}
+                    {...loginForm.register("email")}
+                  />
+                  {loginForm.formState.errors.email && (
+                    <p className="field-error">
+                      {loginForm.formState.errors.email.message}
+                    </p>
+                  )}
+                </div>
 
-              <div className="field-group">
-                <label className="field-label" htmlFor="password">Password</label>
-                <input
-                  id="password"
-                  className="field-input"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  autoComplete={mode === "login" ? "current-password" : "new-password"}
-                />
-              </div>
+                <div className="field-group">
+                  <label className="field-label" htmlFor="login-password">
+                    Password
+                  </label>
+                  <input
+                    id="login-password"
+                    type="password"
+                    placeholder="••••••••"
+                    autoComplete="current-password"
+                    className={`field-input ${loginForm.formState.errors.password ? "error" : ""}`}
+                    {...loginForm.register("password")}
+                  />
+                  {loginForm.formState.errors.password && (
+                    <p className="field-error">
+                      {loginForm.formState.errors.password.message}
+                    </p>
+                  )}
+                </div>
 
-              {mode === "signup" && (
-                <>
-                  <label className="role-label">I want to join as</label>
-                  <div className="role-grid">
-                    <button
-                      type="button"
-                      className={`role-card ${role === "reader" ? "active" : ""}`}
-                      onClick={() => setRole("reader")}
-                    >
-                      <span className="role-card-title">Reader</span>
-                      <span className="role-card-desc">Browse &amp; discover content</span>
-                    </button>
-                    <button
-                      type="button"
-                      className={`role-card ${role === "author" ? "active" : ""}`}
-                      onClick={() => setRole("author")}
-                    >
-                      <span className="role-card-title">Author</span>
-                      <span className="role-card-desc">Write &amp; submit drafts</span>
-                    </button>
-                  </div>
-                </>
-              )}
+                <div className="form-divider">
+                  <div className="form-divider-line" />
+                </div>
 
-              <div className="form-divider">
-                <div className="form-divider-line" />
-              </div>
+                <button
+                  type="submit"
+                  className="submit-btn"
+                  disabled={isSubmitting}
+                >
+                  <span>{isSubmitting ? "Signing in..." : "Sign In →"}</span>
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={signupForm.handleSubmit(onSignup)}>
+                <div className="field-group">
+                  <label className="field-label" htmlFor="signup-email">
+                    Email address
+                  </label>
+                  <input
+                    id="signup-email"
+                    type="email"
+                    placeholder="you@example.com"
+                    autoComplete="email"
+                    className={`field-input ${signupForm.formState.errors.email ? "error" : ""}`}
+                    {...signupForm.register("email")}
+                  />
+                  {signupForm.formState.errors.email && (
+                    <p className="field-error">
+                      {signupForm.formState.errors.email.message}
+                    </p>
+                  )}
+                </div>
 
-              <button type="submit" className="submit-btn" disabled={loading}>
-                <span>
-                  {loading
-                    ? "Please wait..."
-                    : mode === "login"
-                    ? "Sign In →"
-                    : "Create Account →"}
-                </span>
-              </button>
-            </form>
+                <div className="field-group">
+                  <label className="field-label" htmlFor="signup-password">
+                    Password
+                  </label>
+                  <input
+                    id="signup-password"
+                    type="password"
+                    placeholder="••••••••"
+                    autoComplete="new-password"
+                    className={`field-input ${signupForm.formState.errors.password ? "error" : ""}`}
+                    {...signupForm.register("password")}
+                  />
+                  {signupForm.formState.errors.password && (
+                    <p className="field-error">
+                      {signupForm.formState.errors.password.message}
+                    </p>
+                  )}
+                </div>
+
+                <label className="role-label">I want to join as</label>
+                <div className="role-grid">
+                  <button
+                    type="button"
+                    className={`role-card ${role === "reader" ? "active" : ""}`}
+                    onClick={() => {
+                      setRole("reader");
+                      signupForm.setValue("role", "reader");
+                    }}
+                  >
+                    <span className="role-card-title">Reader</span>
+                    <span className="role-card-desc">
+                      Browse &amp; discover content
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`role-card ${role === "author" ? "active" : ""}`}
+                    onClick={() => {
+                      setRole("author");
+                      signupForm.setValue("role", "author");
+                    }}
+                  >
+                    <span className="role-card-title">Author</span>
+                    <span className="role-card-desc">
+                      Write &amp; submit drafts
+                    </span>
+                  </button>
+                </div>
+
+                <div className="form-divider">
+                  <div className="form-divider-line" />
+                </div>
+
+                <button
+                  type="submit"
+                  className="submit-btn"
+                  disabled={isSubmitting}
+                >
+                  <span>
+                    {isSubmitting ? "Creating account..." : "Create Account →"}
+                  </span>
+                </button>
+              </form>
+            )}
 
             <p className="mode-toggle">
-              {mode === "login" ? "Don't have an account? " : "Already have an account? "}
-              <button
-                type="button"
-                onClick={() => {
-                  setMode(mode === "login" ? "signup" : "login");
-                  setError(null);
-                  setMessage(null);
-                }}
-              >
+              {mode === "login"
+                ? "Don't have an account? "
+                : "Already have an account? "}
+              <button type="button" onClick={switchMode}>
                 {mode === "login" ? "Sign up" : "Sign in"}
               </button>
             </p>
