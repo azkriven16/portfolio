@@ -3,7 +3,9 @@ import Link from "next/link";
 
 export default async function BlogsAdminPage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const { data: blogs } = await supabase
     .from("blogs")
@@ -24,30 +26,46 @@ export default async function BlogsAdminPage() {
       </div>
 
       {blogs?.length === 0 && (
-        <p className="text-gray-500">No blog posts yet. Create your first one!</p>
+        <p className="text-gray-500">
+          No blog posts yet. Create your first one!!!!!!!!!
+        </p>
       )}
 
       <div className="space-y-4">
         {blogs?.map((blog) => (
-          <div key={blog.id} className="border border-gray-200 rounded-lg p-4 flex justify-between items-center">
+          <div
+            key={blog.id}
+            className="border border-gray-200 rounded-lg p-4 flex justify-between items-center"
+          >
             <div>
               <h2 className="font-medium">{blog.title}</h2>
               <div className="flex gap-2 mt-1">
-                <span className={`text-xs px-2 py-0.5 rounded-full ${blog.published ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"}`}>
+                <span
+                  className={`text-xs px-2 py-0.5 rounded-full ${blog.published ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"}`}
+                >
                   {blog.published ? "Published" : "Draft"}
                 </span>
                 {blog.tags?.map((tag: string) => (
-                  <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
+                  <span
+                    key={tag}
+                    className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700"
+                  >
                     {tag}
                   </span>
                 ))}
               </div>
             </div>
             <div className="flex gap-2">
-              <Link href={`/blog/${blog.slug}`} className="text-sm text-gray-500 hover:text-black">
+              <Link
+                href={`/blog/${blog.slug}`}
+                className="text-sm text-gray-500 hover:text-black"
+              >
                 View
               </Link>
-              <Link href={`/dashboard/blogs/${blog.id}/edit`} className="text-sm text-gray-500 hover:text-black">
+              <Link
+                href={`/dashboard/blogs/${blog.id}/edit`}
+                className="text-sm text-gray-500 hover:text-black"
+              >
                 Edit
               </Link>
             </div>
