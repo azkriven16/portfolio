@@ -24,93 +24,6 @@ const pageStats = [
   { value: "12", label: "Guestbook", href: "/guestbook" },
 ];
 
-// WMO weather code → minimal label + ascii icon
-const WMO_MAP: Record<number, { label: string; icon: string }> = {
-  0: { label: "Clear", icon: "○" },
-  1: { label: "Mostly Clear", icon: "◎" },
-  2: { label: "Partly Cloud", icon: "◑" },
-  3: { label: "Overcast", icon: "●" },
-  45: { label: "Fog", icon: "≡" },
-  48: { label: "Fog", icon: "≡" },
-  51: { label: "Drizzle", icon: "·" },
-  53: { label: "Drizzle", icon: "·" },
-  55: { label: "Drizzle", icon: "·" },
-  61: { label: "Rain", icon: "▾" },
-  63: { label: "Rain", icon: "▾" },
-  65: { label: "Heavy Rain", icon: "▼" },
-  80: { label: "Showers", icon: "▿" },
-  81: { label: "Showers", icon: "▿" },
-  82: { label: "Showers", icon: "▿" },
-  95: { label: "Storm", icon: "↯" },
-  96: { label: "Storm", icon: "↯" },
-  99: { label: "Storm", icon: "↯" },
-};
-
-function WeatherWidget() {
-  const [weather, setWeather] = useState<{
-    temp: number;
-    label: string;
-    icon: string;
-  } | null>(null);
-
-  useEffect(() => {
-    fetch(
-      "https://api.open-meteo.com/v1/forecast?latitude=10.72&longitude=122.56&current_weather=true",
-    )
-      .then((r) => r.json())
-      .then((data) => {
-        const cw = data.current_weather;
-        const mapped = WMO_MAP[cw.weathercode] ?? { label: "—", icon: "?" };
-        setWeather({
-          temp: Math.round(cw.temperature),
-          label: mapped.label,
-          icon: mapped.icon,
-        });
-      })
-      .catch(() => {});
-  }, []);
-
-  if (!weather) return null;
-
-  return (
-    <div>
-      <div style={LABEL}>Iloilo Weather</div>
-      <div style={{ display: "flex", alignItems: "baseline", gap: "0.35rem" }}>
-        <span
-          style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "2.4rem",
-            fontWeight: 700,
-            color: "var(--c-text-2)",
-            letterSpacing: "-0.02em",
-            lineHeight: 1,
-          }}
-        >
-          {weather.temp}°
-        </span>
-        <span
-          style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.9rem",
-            color: "var(--c-text-4)",
-          }}
-        >
-          {weather.icon}
-        </span>
-      </div>
-      <div
-        style={{
-          ...MONO,
-          fontSize: "0.48rem",
-          color: "var(--c-text-5)",
-          marginTop: "0.2rem",
-        }}
-      >
-        {weather.label}
-      </div>
-    </div>
-  );
-}
 
 
 const DIVIDER = (
@@ -211,9 +124,6 @@ export default function FixedChrome() {
       className="fixed z-40 hidden lg:flex flex-col items-start"
       style={{ bottom: "2rem", left: "1.75rem", gap: "1.5rem" }}
     >
-      {/* Weather — top */}
-      <WeatherWidget />
-
       {/* Divider */}
       <div
         style={{

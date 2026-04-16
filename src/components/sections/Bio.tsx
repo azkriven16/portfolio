@@ -74,14 +74,7 @@ export default function Bio() {
           <span className="shrink-0">Working as</span>
           <Badge>Freelance Developer</Badge>
         </div>
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
-          <span className="shrink-0">Creator of</span>
-          <Badge href="https://github.com/azkriven16/eugergpt">EugerGPT</Badge>
-          <Badge href="https://github.com/azkriven16/birdie">Birdie</Badge>
-          <Badge href="https://github.com/azkriven16/bye-anime">
-            Bye Anime
-          </Badge>
-        </div>
+
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
           <span className="shrink-0">Skilled in</span>
           <Badge>React</Badge>
