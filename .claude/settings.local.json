@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -r \"ANTHROPIC\\\\|GEMINI\" /home/euger/work/viafide/.env*)",
+      "Bash(node -e \":*)"
+    ]
+  }
+}
