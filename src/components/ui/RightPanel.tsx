@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import rawStats from "@/data/stats.json";
 
 const stats = [
-  { value: "5+",  label: "Years coding" },
-  { value: "10+", label: "Projects built" },
-  { value: "3",   label: "Client sites" },
+  { value: String(rawStats.followers), label: "Followers" },
+  { value: String(rawStats.repos),     label: "Repos" },
+  { value: String(rawStats.stars),     label: "Stars" },
 ];
 
 const sections = ["bio", "projects", "experience"];

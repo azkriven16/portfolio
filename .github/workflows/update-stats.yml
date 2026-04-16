@@ -1,0 +1,95 @@
+name: Daily Activity
+
+on:
+  schedule:
+    - cron: "0 9 * * *"   # 09:00 UTC (5 PM PHT)
+    - cron: "0 13 * * *"  # 13:00 UTC (9 PM PHT)
+    - cron: "0 16 * * *"  # 16:00 UTC (midnight PHT)
+    - cron: "30 2 * * *"  # 02:30 UTC (10:30 AM PHT next day)
+  workflow_dispatch:
+
+jobs:
+  # Job 1 — always runs: update GitHub stats
+  update-stats:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch GitHub stats
+        id: stats
+        run: |
+          RESPONSE=$(curl -s https://api.github.com/users/azkriven16)
+          FOLLOWERS=$(echo $RESPONSE | jq '.followers')
+          REPOS=$(echo $RESPONSE | jq '.public_repos')
+
+          STARS=0
+          PAGE=1
+          while true; do
+            REPO_DATA=$(curl -s "https://api.github.com/users/azkriven16/repos?per_page=100&page=$PAGE")
+            COUNT=$(echo $REPO_DATA | jq 'length')
+            if [ "$COUNT" -eq 0 ]; then break; fi
+            PAGE_STARS=$(echo $REPO_DATA | jq '[.[].stargazers_count] | add // 0')
+            STARS=$((STARS + PAGE_STARS))
+            PAGE=$((PAGE + 1))
+          done
+
+          cat > src/data/stats.json << EOF
+          {
+            "followers": $FOLLOWERS,
+            "repos": $REPOS,
+            "stars": $STARS,
+            "updatedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          EOF
+
+      - name: Commit stats if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/data/stats.json
+          git diff --staged --quiet || git commit -m "chore: update github stats [$(date -u +%Y-%m-%d)]"
+          git push
+
+  # Job 2 — runs randomly: touch activity log so commit graph stays green
+  activity-ping:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    # ~75% chance this job runs each trigger (skips roughly 1 in 4)
+    if: ${{ github.run_number % 4 != 0 }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Pick a random commit message
+        id: msg
+        run: |
+          MESSAGES=(
+            "chore: minor housekeeping"
+            "style: adjust spacing"
+            "refactor: clean up unused vars"
+            "docs: update inline notes"
+            "chore: routine maintenance"
+            "fix: correct edge case"
+            "perf: tighten render path"
+            "chore: tidy up imports"
+          )
+          IDX=$(( RANDOM % ${#MESSAGES[@]} ))
+          echo "msg=${MESSAGES[$IDX]}" >> "$GITHUB_OUTPUT"
+
+      - name: Touch activity log
+        run: |
+          echo "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> .github/activity.log
+
+      - name: Commit activity ping
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/activity.log
+          git commit -m "${{ steps.msg.outputs.msg }}"
+          git push
