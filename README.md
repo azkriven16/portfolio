@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# euger — personal portfolio
 
-## Getting Started
+Personal portfolio site built with Next.js 16, Tailwind CSS v4, and TypeScript. Features a dark-first design system, animated UI, live guestbook, and a blog.
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Framework** — Next.js 16 (App Router)
+- **Styling** — Tailwind CSS v4 with CSS variables
+- **Animations** — Motion (Framer Motion), lucide-animated
+- **Database** — NeonDB + Drizzle ORM (guestbook)
+- **Deployment** — Vercel
+
+## Features
+
+- Dark / light theme with CSS variable design tokens
+- Fixed chrome sidebar with live clock and GitHub activity
+- WebGL grain overlay via OGL
+- Command palette (⌘K)
+- Live guestbook
+- MDX-powered blog
+- Project pages with detail view
+- Custom mobile tab bar with anchor-based active detection
+- Fully responsive
+
+## Project Structure
+
+```
+src/
+├── app/                  # Next.js App Router pages
+│   ├── blog/             # Blog list + [slug] pages
+│   ├── guestbook/        # Live guestbook
+│   └── projects/[slug]/  # Project detail pages
+├── components/
+│   ├── sections/         # Page sections (Bio, Projects, Experience, Contact)
+│   ├── ui/               # Shared UI (Navbar, FixedChrome, RightPanel, Grain)
+│   └── icons/            # Custom animated icons
+├── data/                 # Static data (projects, posts, experience)
+└── providers/            # Theme provider
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Running locally
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm install
+pnpm dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open [http://localhost:3000](http://localhost:3000).
 
-## Learn More
+## License
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
