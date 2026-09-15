@@ -1,7 +1,6 @@
 import Bio from "@/components/sections/Bio";
 import Projects from "@/components/sections/Projects";
 import Experience from "@/components/sections/Experience";
-import Newsletter from "@/components/sections/Newsletter";
 import Contact from "@/components/sections/Contact";
 
 export default function Home() {
@@ -15,11 +14,9 @@ export default function Home() {
       <hr />
       <Contact />
       <hr />
-      <Newsletter />
-      <hr />
       <footer className="pt-4 pb-2">
         <p className="text-xs" style={{ color: "var(--c-text-4)" }}>
-          CC BY-NC-SA 4.0 2024-PRESENT © Euger Bonete Jr
+          © 2026 Euger Bonete Jr
         </p>
       </footer>
     </main>
