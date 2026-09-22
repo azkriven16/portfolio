@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { posts } from "@/data/posts";
 
 const LABEL: React.CSSProperties = {
   fontFamily: "var(--font-mono)",
@@ -19,12 +20,18 @@ const MONO: React.CSSProperties = {
   textTransform: "uppercase" as const,
 };
 
-const pageStats = [
-  { value: "4", label: "Blog", href: "/blog" },
-  { value: "12", label: "Guestbook", href: "/guestbook" },
-];
+function useGuestbookCount() {
+  const [count, setCount] = useState<number | null>(null);
 
+  useEffect(() => {
+    fetch("/api/guestbook/count")
+      .then((r) => r.json())
+      .then((data: { count: number | null }) => setCount(data.count))
+      .catch(() => {});
+  }, []);
 
+  return count;
+}
 
 const DIVIDER = (
   <div style={{ width: "1px", height: "1.5rem", background: "var(--c-border)", alignSelf: "center" }} />
@@ -119,6 +126,12 @@ function LiveClock() {
 }
 
 export default function FixedChrome() {
+  const guestbookCount = useGuestbookCount();
+  const pageStats = [
+    { value: String(posts.length), label: "Blog", href: "/blog" },
+    { value: guestbookCount === null ? "–" : String(guestbookCount), label: "Guestbook", href: "/guestbook" },
+  ];
+
   return (
     <div
       className="fixed z-40 hidden lg:flex flex-col items-start"

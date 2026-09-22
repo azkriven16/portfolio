@@ -1,0 +1,14 @@
+# Portfolio audit — tracker
+
+Source of truth is the checkbox in each file. Update it when an item lands.
+
+- `[ ]` open  `[~]` in progress  `[x]` done  `[?]` blocked, needs an answer from Euger
+
+| File | Scope |
+| --- | --- |
+| [01-broken.md](01-broken.md) | Bugs and dead ends visitors can hit today |
+| [02-not-real.md](02-not-real.md) | Things that claim to work but don't, or contradict each other |
+| [03-missing.md](03-missing.md) | SEO, accessibility, tooling, features that don't exist yet |
+| [04-cleanup.md](04-cleanup.md) | Dead code, unused deps, leftovers |
+
+Audit date: 2026-09-19. Verified with `tsc --noEmit`, `next build`, and a `curl` sweep of every route.

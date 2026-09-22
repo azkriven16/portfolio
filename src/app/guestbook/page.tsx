@@ -1,8 +1,8 @@
-"use client";
-
 import Link from "next/link";
-import { useState } from "react";
-import { guestbookEntries, type GuestbookEntry } from "@/data/guestbook";
+import { getGuestbookEntries } from "@/lib/db";
+import { GuestbookForm } from "./GuestbookForm";
+
+export const dynamic = "force-dynamic";
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("en-US", {
@@ -14,39 +14,8 @@ function initials(name: string) {
   return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
 }
 
-const INPUT: React.CSSProperties = {
-  width: "100%",
-  background: "var(--c-surface)",
-  border: "1px solid var(--c-border)",
-  borderRadius: "0.4rem",
-  padding: "0.55rem 0.75rem",
-  fontSize: "0.88rem",
-  color: "var(--c-text)",
-  outline: "none",
-  fontFamily: "var(--font-sans)",
-  transition: "border-color 0.15s",
-};
-
-export default function GuestbookPage() {
-  const [entries, setEntries] = useState<GuestbookEntry[]>(guestbookEntries);
-  const [name, setName] = useState("");
-  const [message, setMessage] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim() || !message.trim()) return;
-    setEntries([{
-      id: Date.now(),
-      name: name.trim(),
-      message: message.trim(),
-      date: new Date().toISOString().split("T")[0],
-    }, ...entries]);
-    setName("");
-    setMessage("");
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
-  };
+export default async function GuestbookPage() {
+  const entries = await getGuestbookEntries();
 
   return (
     <main className="max-w-2xl mx-auto px-6 pt-16 pb-32">
@@ -61,35 +30,7 @@ export default function GuestbookPage() {
           Leave a message. Say hi. I read every one.
         </p>
 
-        <form onSubmit={handleSubmit} className="mb-12">
-          <div className="flex flex-col gap-3">
-            <input type="text" placeholder="Your name" value={name}
-              onChange={(e) => setName(e.target.value)} style={INPUT} required maxLength={60}
-              onFocus={e => (e.currentTarget.style.borderColor = "var(--c-text-3)")}
-              onBlur={e => (e.currentTarget.style.borderColor = "var(--c-border)")} />
-            <textarea placeholder="Leave a message..." value={message}
-              onChange={(e) => setMessage(e.target.value)} rows={3}
-              style={{ ...INPUT, resize: "none" }} required maxLength={280}
-              onFocus={e => (e.currentTarget.style.borderColor = "var(--c-text-3)")}
-              onBlur={e => (e.currentTarget.style.borderColor = "var(--c-border)")} />
-            <div className="flex items-center gap-3">
-              <button type="submit" style={{
-                background: "var(--c-btn-bg)", color: "var(--c-btn-fg)", border: "none",
-                borderRadius: "0.4rem", padding: "0.5rem 1.25rem", fontSize: "0.82rem",
-                fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-sans)", transition: "background 0.15s",
-              }}
-                onMouseEnter={e => (e.currentTarget.style.background = "var(--c-btn-hover)")}
-                onMouseLeave={e => (e.currentTarget.style.background = "var(--c-btn-bg)")}>
-                Sign Guestbook
-              </button>
-              {submitted && (
-                <span style={{ fontSize: "0.8rem", color: "var(--c-success)", fontFamily: "var(--font-mono)" }}>
-                  message sent!
-                </span>
-              )}
-            </div>
-          </div>
-        </form>
+        <GuestbookForm />
 
         <div style={{ borderTop: "1px solid var(--c-border-2)", paddingTop: "2rem" }}>
           <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--c-text-4)", marginBottom: "1.5rem" }}>
