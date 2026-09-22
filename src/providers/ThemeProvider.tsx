@@ -12,10 +12,10 @@ const ThemeContext = createContext<{ theme: Theme; toggle: () => void }>({
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>("dark");
 
+  // The inline script in layout.tsx has already put the class on <html>;
+  // sync React state with it instead of re-applying the theme.
   useEffect(() => {
-    const stored = localStorage.getItem("theme") as Theme | null;
-    if (stored) apply(stored);
-    else apply("dark");
+    setTheme(document.documentElement.classList.contains("light") ? "light" : "dark");
   }, []);
 
   function apply(t: Theme) {
@@ -23,7 +23,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const root = document.documentElement;
     root.classList.remove("light", "dark");
     root.classList.add(t);
-    localStorage.setItem("theme", t);
+    try {
+      localStorage.setItem("theme", t);
+    } catch {
+      /* storage unavailable (private mode) — theme still applies for this session */
+    }
   }
 
   return (
