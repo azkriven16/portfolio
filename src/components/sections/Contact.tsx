@@ -44,8 +44,8 @@ export default function Contact() {
         </p>
 
         <div className="flex flex-wrap gap-x-5 gap-y-2 pt-2">
-          <ContactLink href="mailto:eugerbone@email.com" Icon={MailCheckIcon} mail>
-            eugerbone@email.com
+          <ContactLink href="mailto:eugerbone@gmail.com" Icon={MailCheckIcon} mail>
+            eugerbone@gmail.com
           </ContactLink>
           <ContactLink href="https://github.com/azkriven16" Icon={GithubIcon}>
             GitHub

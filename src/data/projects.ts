@@ -89,3 +89,7 @@ export const projects: Project[] = [
     status: "completed",
   },
 ];
+
+export function projectSlug(project: Project) {
+  return project.title.toLowerCase().replace(/\s+/g, "-");
+}

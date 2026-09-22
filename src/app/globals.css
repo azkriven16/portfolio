@@ -40,7 +40,7 @@
   --c-text:     #111111;
   --c-text-2:   #555555;
   --c-text-3:   #888888;
-  --c-text-4:   #bbbbb;
+  --c-text-4:   #bbbbbb;
   --c-text-5:   #cccccc;
 
   --c-btn-bg:   #111111;
@@ -205,4 +205,209 @@ hr {
 
 .post-link:hover .post-title {
   color: var(--c-text);
+}
+
+/* ── Navigation menu (hover dropdowns in the top bar) ── */
+
+.nav-menu,
+.nav-menu-list {
+  display: flex;
+  align-items: center;
+}
+
+.nav-menu-list {
+  gap: 0.125rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-menu-item {
+  position: relative;
+}
+
+.nav-menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.35rem 0.6rem;
+  border: none;
+  border-radius: 0.35rem;
+  background: transparent;
+  color: var(--c-text-3);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+
+.nav-menu-trigger:hover,
+.nav-menu-trigger:focus-visible,
+.nav-menu-trigger[data-state="open"] {
+  color: var(--c-text);
+  background: var(--c-surface);
+}
+
+.nav-menu-chevron {
+  transition: transform 0.2s ease;
+}
+
+.nav-menu-trigger[data-state="open"] .nav-menu-chevron {
+  transform: rotate(180deg);
+}
+
+.nav-menu-content {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  z-index: 60;
+  width: min(30rem, calc(100vw - 2rem));
+  padding: 0.35rem;
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: 0.6rem;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35);
+}
+
+.nav-menu-content[data-state="open"] {
+  animation: nav-menu-in 0.15s ease-out;
+}
+
+.nav-menu-content[data-state="closed"] {
+  animation: nav-menu-out 0.1s ease-in;
+}
+
+@keyframes nav-menu-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes nav-menu-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-4px); }
+}
+
+.nav-menu-grid {
+  display: grid;
+  grid-template-columns: 11rem 1fr;
+  gap: 0.35rem;
+}
+
+.nav-menu-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.nav-menu-link {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 0.4rem;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.nav-menu-link:hover,
+.nav-menu-link:focus-visible {
+  background: var(--c-surface);
+}
+
+.nav-menu-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--c-border);
+  border-radius: 0.45rem;
+  background: var(--c-surface);
+  color: var(--c-text-2);
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.nav-menu-link:hover .nav-menu-icon,
+.nav-menu-link:focus-visible .nav-menu-icon {
+  color: var(--c-text);
+  border-color: var(--c-text-3);
+}
+
+.nav-menu-text {
+  min-width: 0;
+}
+
+/* Text blurb card: stays dark in both themes */
+.nav-menu-blurb {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  min-height: 11rem;
+  padding: 0.85rem;
+  border: 1px solid #2a2a2a;
+  border-radius: 0.45rem;
+  background:
+    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.09) 1px, transparent 0) 0 0 / 14px 14px,
+    linear-gradient(145deg, #232323 0%, #0e0e0e 100%);
+  color: #e5e5e5;
+}
+
+.nav-menu-blurb-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8a8a8a;
+}
+
+.nav-menu-blurb-icon {
+  margin-top: 0.25rem;
+  color: #e5e5e5;
+}
+
+.nav-menu-blurb-title {
+  margin-top: auto;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #f5f5f5;
+}
+
+.nav-menu-blurb-text {
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: #9a9a9a;
+}
+
+.nav-menu-link-title {
+  display: block;
+  color: var(--c-text);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.nav-menu-link-desc {
+  display: block;
+  margin-top: 0.1rem;
+  color: var(--c-text-3);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+/* ── Reduced motion ── */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

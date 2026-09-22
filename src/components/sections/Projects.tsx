@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { GithubIcon, LinkIcon } from "lucide-animated";
-import { projects } from "@/data/projects";
+import { projects, projectSlug } from "@/data/projects";
 import Link from "next/link";
 
 type AnimHandle = { startAnimation: () => void; stopAnimation: () => void };
@@ -51,7 +51,7 @@ export default function Projects() {
 
       <div className="space-y-10">
         {projects.map((project) => {
-          const slug = project.title.toLowerCase().replace(/\s+/g, "-");
+          const slug = projectSlug(project);
           return (
             <div key={project.title}>
               <div className="flex items-center gap-3 mb-1.5">

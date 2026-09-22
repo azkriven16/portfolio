@@ -1,4 +1,5 @@
-import { projects } from "@/data/projects";
+import type { Metadata } from "next";
+import { projects, projectSlug } from "@/data/projects";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -7,12 +8,25 @@ interface ProjectPageProps {
   params: Promise<{ slug: string }>;
 }
 
+export function generateStaticParams() {
+  return projects.map((p) => ({ slug: projectSlug(p) }));
+}
+
+export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const project = projects.find((p) => projectSlug(p) === slug);
+  if (!project) return {};
+  return {
+    title: `${project.title} — Euger Bonete Jr`,
+    description: project.description,
+    openGraph: { title: project.title, description: project.description, type: "article" },
+  };
+}
+
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { slug } = await params;
 
-  const project = projects.find(
-    (p) => p.title.toLowerCase().replace(/\s+/g, "-") === slug,
-  );
+  const project = projects.find((p) => projectSlug(p) === slug);
 
   if (!project) notFound();
 

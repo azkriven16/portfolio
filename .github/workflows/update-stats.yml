@@ -21,18 +21,29 @@ jobs:
 
       - name: Fetch GitHub stats
         id: stats
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          RESPONSE=$(curl -s https://api.github.com/users/azkriven16)
-          FOLLOWERS=$(echo $RESPONSE | jq '.followers')
-          REPOS=$(echo $RESPONSE | jq '.public_repos')
+          # Authenticated calls avoid the shared-runner rate limit. -f fails the step on HTTP errors.
+          api() { curl -sf -H "Authorization: Bearer $GH_TOKEN" "$@"; }
+
+          RESPONSE=$(api https://api.github.com/users/azkriven16)
+          FOLLOWERS=$(echo "$RESPONSE" | jq '.followers')
+          REPOS=$(echo "$RESPONSE" | jq '.public_repos')
+
+          if [ "$FOLLOWERS" = "null" ] || [ "$REPOS" = "null" ]; then
+            echo "GitHub API returned no user data: $RESPONSE"
+            exit 1
+          fi
 
           STARS=0
           PAGE=1
           while true; do
-            REPO_DATA=$(curl -s "https://api.github.com/users/azkriven16/repos?per_page=100&page=$PAGE")
-            COUNT=$(echo $REPO_DATA | jq 'length')
+            REPO_DATA=$(api "https://api.github.com/users/azkriven16/repos?per_page=100&page=$PAGE")
+            echo "$REPO_DATA" | jq -e 'type == "array"' > /dev/null || { echo "Unexpected repo response: $REPO_DATA"; exit 1; }
+            COUNT=$(echo "$REPO_DATA" | jq 'length')
             if [ "$COUNT" -eq 0 ]; then break; fi
-            PAGE_STARS=$(echo $REPO_DATA | jq '[.[].stargazers_count] | add // 0')
+            PAGE_STARS=$(echo "$REPO_DATA" | jq '[.[].stargazers_count] | add // 0')
             STARS=$((STARS + PAGE_STARS))
             PAGE=$((PAGE + 1))
           done
@@ -54,19 +65,33 @@ jobs:
           git diff --staged --quiet || git commit -m "chore: update github stats [$(date -u +%Y-%m-%d)]"
           git push
 
-  # Job 2 — runs randomly: touch activity log so commit graph stays green
+  # Job 2 — runs most of the time: touch activity log so commit graph stays green.
+  # Waits for job 1 so the two jobs never push to main at the same time.
   activity-ping:
     runs-on: ubuntu-latest
+    needs: update-stats
+    if: ${{ !cancelled() }}
     permissions:
       contents: write
-    # ~75% chance this job runs each trigger (skips roughly 1 in 4)
-    if: ${{ github.run_number % 4 != 0 }}
 
     steps:
+      # Skips roughly 1 in 4 runs. Actions expressions have no modulo operator,
+      # so the check lives in the shell instead of a job-level `if`.
+      - name: Decide whether to run
+        id: gate
+        run: |
+          if [ $(( ${{ github.run_number }} % 4 )) -eq 0 ]; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Checkout
+        if: steps.gate.outputs.run == 'true'
         uses: actions/checkout@v4
 
       - name: Pick a random commit message
+        if: steps.gate.outputs.run == 'true'
         id: msg
         run: |
           MESSAGES=(
@@ -83,10 +108,12 @@ jobs:
           echo "msg=${MESSAGES[$IDX]}" >> "$GITHUB_OUTPUT"
 
       - name: Touch activity log
+        if: steps.gate.outputs.run == 'true'
         run: |
           echo "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> .github/activity.log
 
       - name: Commit activity ping
+        if: steps.gate.outputs.run == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

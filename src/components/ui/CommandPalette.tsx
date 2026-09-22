@@ -7,12 +7,13 @@ const commands = [
   { label: "Home",        hint: "Go to homepage",         action: "/",           type: "nav" },
   { label: "Blog",        hint: "Read the blog",          action: "/blog",       type: "nav" },
   { label: "Guestbook",   hint: "Sign the guestbook",     action: "/guestbook",  type: "nav" },
+  { label: "Side Projects", hint: "Apps and experiments", action: "/side-projects", type: "nav" },
   { label: "Projects",    hint: "Jump to projects",       action: "/#projects",  type: "nav" },
   { label: "Experience",  hint: "Jump to experience",     action: "/#experience",type: "nav" },
-  { label: "Resume",      hint: "Open resume PDF",        action: "/resume.pdf", type: "link" },
+  { label: "Resume",      hint: "Open resume PDF",        action: "/euger_bonete_resume_dev.pdf", type: "link" },
   { label: "GitHub",      hint: "github.com/azkriven16",  action: "https://github.com/azkriven16",          type: "link" },
   { label: "LinkedIn",    hint: "linkedin.com/in/euger-bonete", action: "https://linkedin.com/in/euger-bonete", type: "link" },
-  { label: "Email",       hint: "eugerbone@email.com",    action: "mailto:eugerbone@email.com", type: "link" },
+  { label: "Email",       hint: "eugerbone@gmail.com",    action: "mailto:eugerbone@gmail.com", type: "link" },
 ];
 
 export default function CommandPalette() {
@@ -36,11 +37,15 @@ export default function CommandPalette() {
   }, []);
 
   useEffect(() => {
-    if (open) {
-      setQuery("");
-      setIndex(0);
-      setTimeout(() => inputRef.current?.focus(), 0);
-    }
+    if (!open) return;
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    setQuery("");
+    setIndex(0);
+    const t = setTimeout(() => inputRef.current?.focus(), 0);
+    return () => {
+      clearTimeout(t);
+      previouslyFocused?.focus?.();
+    };
   }, [open]);
 
   const filtered = commands.filter((c) =>
@@ -69,6 +74,9 @@ export default function CommandPalette() {
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Command palette"
       className="fixed inset-0 z-[100] flex items-start justify-center pt-[20vh]"
       style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }}
       onClick={() => setOpen(false)}
@@ -97,6 +105,7 @@ export default function CommandPalette() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKey}
+            aria-label="Search commands"
             placeholder="Search for a command..."
             style={{
               flex: 1,
