@@ -88,9 +88,7 @@ export default function Bio() {
       <div className="space-y-4" style={{ fontSize: "0.95rem" }}>
         <p>
           I started coding about 5 years ago and graduated with a{" "}
-          <a href="#" className="prose-link">
-            Bachelor of Science in Information Technology
-          </a>{" "}
+Bachelor of Science in Information Technology{" "}
           in 2025. I specialize in React development, crafting beautiful and
           interactive digital experiences from creative concepts and business
           ideas.
@@ -152,11 +150,14 @@ export default function Bio() {
             Ciptax Pro
           </a>{" "}
           — and worked part-time at{" "}
-          <a href="#" className="prose-link">
-            Rocketshyft
-          </a>{" "}
+          Rocketshyft{" "}
           and interned at{" "}
-          <a href="#" className="prose-link">
+          <a
+            href="https://digipay.ph/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="prose-link"
+          >
             Digipay
           </a>
           .
@@ -189,11 +190,11 @@ export default function Bio() {
         <span style={{ ...T3, display: "block" }}>
           Or mail me at{" "}
           <SocialLink
-            href="mailto:eugerbone@email.com"
+            href="mailto:eugerbone@gmail.com"
             Icon={MailCheckIcon}
             mail
           >
-            eugerbone@email.com
+            eugerbone@gmail.com
           </SocialLink>
         </span>
       </div>

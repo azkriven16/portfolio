@@ -23,7 +23,6 @@ export default function BlogPage() {
       <div className="pt-8">
         <Link href="/" style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--c-text-4)", letterSpacing: "0.08em" }}
           className="transition-colors duration-150 mb-8 inline-block"
-          onMouseEnter={undefined}
         >
           ← back
         </Link>

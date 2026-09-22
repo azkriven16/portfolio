@@ -83,18 +83,31 @@ export default function Grain({
       res[1] = gl.drawingBufferHeight;
     };
 
-    const ro = new ResizeObserver(setSize);
-    ro.observe(container);
-    setSize();
+    // Static grain only needs one draw (plus redraws on resize). Skip the
+    // per-frame loop unless the grain is animated and motion is allowed.
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const loopEnabled = animated && !reduceMotion;
 
     let raf = 0;
     const t0 = performance.now();
-    const loop = (t: number) => {
+    const draw = (t: number) => {
       (program.uniforms.iTime as { value: number }).value = (t - t0) * 0.001;
       renderer.render({ scene: mesh });
+    };
+    const loop = (t: number) => {
+      draw(t);
       raf = requestAnimationFrame(loop);
     };
-    raf = requestAnimationFrame(loop);
+
+    const ro = new ResizeObserver(() => {
+      setSize();
+      if (!loopEnabled) draw(performance.now());
+    });
+    ro.observe(container);
+    setSize();
+
+    if (loopEnabled) raf = requestAnimationFrame(loop);
+    else draw(performance.now());
 
     return () => {
       cancelAnimationFrame(raf);

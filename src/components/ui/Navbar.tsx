@@ -9,16 +9,60 @@ import {
   SunIcon,
   TurkishLiraIcon,
 } from "lucide-animated";
-import { Search } from "lucide-react";
+import {
+  BookOpen,
+  Briefcase,
+  FlaskConical,
+  FolderGit2,
+  Mail,
+  MessageSquare,
+  PenLine,
+  Rocket,
+  Search,
+} from "lucide-react";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 type AnimHandle = { startAnimation: () => void; stopAnimation: () => void };
 
-const navLinks = [
-  { label: "Projects", href: "/#projects" },
-  { label: "Experience", href: "/#experience" },
+const navMenus = [
+  {
+    label: "Work",
+    blurb: {
+      eyebrow: "Selected work",
+      Icon: Rocket,
+      title: "Things I've shipped",
+      text: "Production apps for real clients — job boards, chat platforms, tax tools and more.",
+    },
+    items: [
+      { label: "Projects", href: "/#projects", Icon: FolderGit2, description: "Client work and products I've built" },
+      { label: "Experience", href: "/#experience", Icon: Briefcase, description: "Roles and background" },
+      { label: "Contact", href: "/#contact", Icon: Mail, description: "Get in touch" },
+    ],
+  },
+  {
+    label: "Explore",
+    blurb: {
+      eyebrow: "Off the clock",
+      Icon: BookOpen,
+      title: "Notes & hellos",
+      text: "Writing about web dev and building things, plus a guestbook for anyone who wants to say hi.",
+    },
+    items: [
+      { label: "Blog", href: "/blog", Icon: PenLine, description: "Notes on web development and building things" },
+      { label: "Guestbook", href: "/guestbook", Icon: MessageSquare, description: "Leave a message and say hi" },
+      { label: "Side Projects", href: "/side-projects", Icon: FlaskConical, description: "Apps and experiments for fun" },
+    ],
+  },
 ];
 
 const ICON_BTN: React.CSSProperties = {
@@ -124,6 +168,11 @@ export default function Navbar() {
   const pathname = usePathname();
   const activeAnchor = useActiveAnchor(ANCHOR_IDS);
 
+  const [shortcut, setShortcut] = useState("Ctrl K");
+  useEffect(() => {
+    if (/Mac|iPhone|iPad/.test(navigator.platform)) setShortcut("⌘K");
+  }, []);
+
   const logoRef = useRef<AnimHandle>(null);
 
   const resumeRef = useRef<AnimHandle>(null);
@@ -150,7 +199,7 @@ export default function Navbar() {
         <nav className="max-w-2xl mx-auto px-6 h-14 flex items-center justify-between gap-4">
           {/* Left: logo + nav links */}
           <div className="flex items-center gap-4 min-w-0">
-            <a
+            <Link
               href="/"
               aria-label="Home"
               style={{
@@ -167,35 +216,43 @@ export default function Navbar() {
               onMouseLeave={() => logoRef.current?.stopAnimation()}
             >
               <TurkishLiraIcon ref={logoRef} size={20} />
-            </a>
+            </Link>
 
-            {/* Desktop nav links */}
-            <div className="hidden md:flex items-center gap-0.5">
-              {navLinks.map(({ label, href }) => (
-                <Link
-                  key={label}
-                  href={href}
-                  style={{
-                    fontSize: "0.8rem",
-                    color: "var(--c-text-3)",
-                    padding: "0.35rem 0.6rem",
-                    borderRadius: "0.35rem",
-                    textDecoration: "none",
-                    transition: "color 0.15s, background 0.15s",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = "var(--c-text)";
-                    e.currentTarget.style.background = "var(--c-surface)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "var(--c-text-3)";
-                    e.currentTarget.style.background = "transparent";
-                  }}
-                >
-                  {label}
-                </Link>
-              ))}
-            </div>
+            {/* Desktop nav menus */}
+            <NavigationMenu className="hidden md:flex">
+              <NavigationMenuList>
+                {navMenus.map(({ label, blurb, items }) => (
+                  <NavigationMenuItem key={label}>
+                    <NavigationMenuTrigger>{label}</NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <div className="nav-menu-grid">
+                        <div className="nav-menu-blurb">
+                          <span className="nav-menu-blurb-eyebrow">{blurb.eyebrow}</span>
+                          <blurb.Icon size={22} aria-hidden="true" className="nav-menu-blurb-icon" />
+                          <span className="nav-menu-blurb-title">{blurb.title}</span>
+                          <span className="nav-menu-blurb-text">{blurb.text}</span>
+                        </div>
+                        <div className="nav-menu-items">
+                          {items.map(({ label: itemLabel, href, Icon, description }) => (
+                            <NavigationMenuLink key={href} asChild>
+                              <Link href={href}>
+                                <span className="nav-menu-icon">
+                                  <Icon size={16} aria-hidden="true" />
+                                </span>
+                                <span className="nav-menu-text">
+                                  <span className="nav-menu-link-title">{itemLabel}</span>
+                                  <span className="nav-menu-link-desc">{description}</span>
+                                </span>
+                              </Link>
+                            </NavigationMenuLink>
+                          ))}
+                        </div>
+                      </div>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                ))}
+              </NavigationMenuList>
+            </NavigationMenu>
           </div>
 
           {/* Right: actions */}
@@ -203,7 +260,7 @@ export default function Navbar() {
 
             {/* ── Mobile-only socials (before search) ── */}
             <div className="flex sm:hidden items-center gap-1">
-              <a href="/resume.pdf" aria-label="Resume" style={ICON_BTN}>
+              <a href="/euger_bonete_resume_dev.pdf" target="_blank" rel="noopener noreferrer" aria-label="Resume" style={ICON_BTN}>
                 <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                   <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/>
                   <path d="M14 2v4a2 2 0 0 0 2 2h4M10 9H8M16 13H8M16 17H8"/>
@@ -239,7 +296,7 @@ export default function Navbar() {
             <button
               onClick={openPalette}
               aria-label="Search"
-              className="p-1.5 md:px-3 md:py-1"
+              className="p-1.5 lg:px-3 lg:py-1"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -263,9 +320,9 @@ export default function Navbar() {
               }}
             >
               <Search size={14} />
-              <span className="hidden md:inline">Search</span>
+              <span className="hidden lg:inline">Search</span>
               <kbd
-                className="hidden md:inline"
+                className="hidden lg:inline"
                 style={{
                   fontFamily: "var(--font-mono)",
                   fontSize: "0.7rem",
@@ -277,7 +334,7 @@ export default function Navbar() {
                   lineHeight: 1,
                 }}
               >
-                ⌘K
+                {shortcut}
               </kbd>
             </button>
 
@@ -293,7 +350,7 @@ export default function Navbar() {
             />
 
             <div className="hidden sm:flex items-center gap-1">
-              <AnimIconBtn iconRef={resumeRef} href="/resume.pdf" label="Resume">
+              <AnimIconBtn iconRef={resumeRef} href="/euger_bonete_resume_dev.pdf" external label="Resume">
                 <FileTextIcon ref={resumeRef} size={14} />
               </AnimIconBtn>
               <AnimIconBtn

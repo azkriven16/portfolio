@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { posts } from "@/data/posts";
 import type { Metadata } from "next";
+import InlineMarkdown from "@/components/ui/InlineMarkdown";
 
 export function generateStaticParams() {
   return posts.map((p) => ({ slug: p.slug }));
@@ -45,7 +46,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
         <div className="space-y-5">
           {paragraphs.map((para, i) => (
             <p key={i} style={{ color: "var(--c-text-2)", fontSize: "0.95rem", lineHeight: "1.85" }}>
-              {para}
+              <InlineMarkdown text={para} />
             </p>
           ))}
         </div>
