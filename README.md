@@ -48,6 +48,7 @@ src/
 | --- | --- |
 | `NEXT_PUBLIC_BASE_URL` | Canonical site URL for the sitemap, `robots.txt` and OpenGraph metadata. Defaults to `https://euger.vercel.app`. |
 | `DATABASE_URL` | Neon Postgres connection string backing the guestbook (`src/lib/db.ts`). Without it, `/guestbook` and the guestbook count in `FixedChrome` error. Set via the Neon integration in Vercel's Storage tab, or manually at [neon.tech](https://neon.tech). |
+| `RESEND_API_KEY` | [Resend](https://resend.com) API key backing the contact form (`src/components/sections/contact-actions.ts`). Without it, submitting the form errors. Uses the shared `onboarding@resend.dev` sender, so no domain verification needed as long as messages are addressed to the account's own signup email. |
 
 ## Guestbook moderation
 

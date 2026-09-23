@@ -1,20 +1,15 @@
 "use server";
 
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { addGuestbookEntry, checkGuestbookRateLimit, recordGuestbookSubmission } from "@/lib/db";
+import { addGuestbookEntry, checkRateLimit, recordRateLimitSubmission } from "@/lib/db";
+import { getClientIdentifier } from "@/lib/request";
 
 export interface SignGuestbookState {
   error: string | null;
   success: boolean;
 }
 
-async function getClientIdentifier(): Promise<string> {
-  const h = await headers();
-  const forwardedFor = h.get("x-forwarded-for");
-  if (forwardedFor) return forwardedFor.split(",")[0].trim();
-  return h.get("x-real-ip") ?? "unknown";
-}
+const RATE_LIMIT_SECONDS = 30;
 
 export async function signGuestbook(
   _prevState: SignGuestbookState,
@@ -35,14 +30,14 @@ export async function signGuestbook(
   }
 
   const identifier = await getClientIdentifier();
-  const { allowed, retryAfterSeconds } = await checkGuestbookRateLimit(identifier);
+  const { allowed, retryAfterSeconds } = await checkRateLimit("guestbook", identifier, RATE_LIMIT_SECONDS);
   if (!allowed) {
     return { error: `Slow down — try again in ${retryAfterSeconds}s.`, success: false };
   }
 
   try {
     await addGuestbookEntry(name, message);
-    await recordGuestbookSubmission(identifier);
+    await recordRateLimitSubmission("guestbook", identifier);
   } catch {
     return { error: "Couldn't save your message. Try again.", success: false };
   }

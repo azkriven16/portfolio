@@ -41,41 +41,47 @@ async function ensureSchema() {
         }
       }
       await sql`
-        CREATE TABLE IF NOT EXISTS guestbook_rate_limits (
-          identifier TEXT PRIMARY KEY,
-          last_submitted_at TIMESTAMPTZ NOT NULL
+        CREATE TABLE IF NOT EXISTS rate_limits (
+          scope TEXT NOT NULL,
+          identifier TEXT NOT NULL,
+          last_submitted_at TIMESTAMPTZ NOT NULL,
+          PRIMARY KEY (scope, identifier)
         )
       `;
+      // Superseded by the generic rate_limits table above.
+      await sql`DROP TABLE IF EXISTS guestbook_rate_limits`;
     })();
   }
   return schemaReady;
 }
 
-const RATE_LIMIT_SECONDS = 30;
-
-export async function checkGuestbookRateLimit(
+// Shared per-scope, per-identifier (usually IP) submission rate limit —
+// used by both the guestbook and the contact form.
+export async function checkRateLimit(
+  scope: string,
   identifier: string,
+  windowSeconds: number,
 ): Promise<{ allowed: boolean; retryAfterSeconds?: number }> {
   await ensureSchema();
   const sql = getSql();
   const rows = await sql`
-    SELECT last_submitted_at FROM guestbook_rate_limits WHERE identifier = ${identifier}
+    SELECT last_submitted_at FROM rate_limits WHERE scope = ${scope} AND identifier = ${identifier}
   `;
   if (rows.length > 0) {
     const elapsedSeconds = (Date.now() - new Date(rows[0].last_submitted_at as string).getTime()) / 1000;
-    if (elapsedSeconds < RATE_LIMIT_SECONDS) {
-      return { allowed: false, retryAfterSeconds: Math.ceil(RATE_LIMIT_SECONDS - elapsedSeconds) };
+    if (elapsedSeconds < windowSeconds) {
+      return { allowed: false, retryAfterSeconds: Math.ceil(windowSeconds - elapsedSeconds) };
     }
   }
   return { allowed: true };
 }
 
-export async function recordGuestbookSubmission(identifier: string): Promise<void> {
+export async function recordRateLimitSubmission(scope: string, identifier: string): Promise<void> {
   const sql = getSql();
   await sql`
-    INSERT INTO guestbook_rate_limits (identifier, last_submitted_at)
-    VALUES (${identifier}, now())
-    ON CONFLICT (identifier) DO UPDATE SET last_submitted_at = now()
+    INSERT INTO rate_limits (scope, identifier, last_submitted_at)
+    VALUES (${scope}, ${identifier}, now())
+    ON CONFLICT (scope, identifier) DO UPDATE SET last_submitted_at = now()
   `;
 }
 
