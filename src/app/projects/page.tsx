@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { projects, projectSlug } from "@/data/projects";
+import TechTags from "@/components/ui/TechTags";
 
 export const metadata: Metadata = {
   title: "Projects — Euger Bonete Jr",
@@ -29,9 +30,10 @@ export default function ProjectsPage() {
             <li key={project.title}>
               <Link href={`/projects/${projectSlug(project)}`} className="post-link">
                 <span className="post-title block mb-1">{project.title}</span>
-                <p style={{ color: "var(--c-text-3)", fontSize: "0.88rem", lineHeight: "1.6" }}>
+                <p style={{ color: "var(--c-text-3)", fontSize: "0.88rem", lineHeight: "1.6" }} className="mb-2">
                   {project.description}
                 </p>
+                <TechTags tech={project.tech} size="sm" />
               </Link>
             </li>
           ))}

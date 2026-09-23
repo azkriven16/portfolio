@@ -3,6 +3,7 @@ import { projects, projectSlug } from "@/data/projects";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import TechTags from "@/components/ui/TechTags";
 
 interface ProjectPageProps {
   params: Promise<{ slug: string }>;
@@ -119,24 +120,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       {/* Tech stack */}
       <div style={{ marginBottom: "2rem" }}>
         <h2 className="mb-4" style={{ fontSize: "1rem" }}>Stack</h2>
-        <div className="flex flex-wrap gap-1.5">
-          {project.tech.map((tag) => (
-            <span
-              key={tag}
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: "0.72rem",
-                color: "var(--c-text-3)",
-                background: "var(--c-surface)",
-                border: "1px solid var(--c-border)",
-                borderRadius: "0.25rem",
-                padding: "0.15rem 0.5rem",
-              }}
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
+        <TechTags tech={project.tech} />
       </div>
 
       <hr />
