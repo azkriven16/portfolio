@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { GithubIcon, LinkedinIcon, MailCheckIcon } from "lucide-animated";
+import ContactForm from "./ContactForm";
 
 type AnimHandle = { startAnimation: () => void; stopAnimation: () => void };
 
@@ -54,6 +55,8 @@ export default function Contact() {
             LinkedIn
           </ContactLink>
         </div>
+
+        <ContactForm />
       </div>
     </section>
   );
