@@ -40,18 +40,58 @@ async function ensureSchema() {
           `;
         }
       }
+      await sql`
+        CREATE TABLE IF NOT EXISTS guestbook_rate_limits (
+          identifier TEXT PRIMARY KEY,
+          last_submitted_at TIMESTAMPTZ NOT NULL
+        )
+      `;
     })();
   }
   return schemaReady;
 }
 
-export async function getGuestbookEntries(): Promise<GuestbookEntry[]> {
+const RATE_LIMIT_SECONDS = 30;
+
+export async function checkGuestbookRateLimit(
+  identifier: string,
+): Promise<{ allowed: boolean; retryAfterSeconds?: number }> {
+  await ensureSchema();
+  const sql = getSql();
+  const rows = await sql`
+    SELECT last_submitted_at FROM guestbook_rate_limits WHERE identifier = ${identifier}
+  `;
+  if (rows.length > 0) {
+    const elapsedSeconds = (Date.now() - new Date(rows[0].last_submitted_at as string).getTime()) / 1000;
+    if (elapsedSeconds < RATE_LIMIT_SECONDS) {
+      return { allowed: false, retryAfterSeconds: Math.ceil(RATE_LIMIT_SECONDS - elapsedSeconds) };
+    }
+  }
+  return { allowed: true };
+}
+
+export async function recordGuestbookSubmission(identifier: string): Promise<void> {
+  const sql = getSql();
+  await sql`
+    INSERT INTO guestbook_rate_limits (identifier, last_submitted_at)
+    VALUES (${identifier}, now())
+    ON CONFLICT (identifier) DO UPDATE SET last_submitted_at = now()
+  `;
+}
+
+export const GUESTBOOK_PAGE_SIZE = 20;
+
+export async function getGuestbookEntries(
+  { limit, offset }: { limit?: number; offset?: number } = {},
+): Promise<GuestbookEntry[]> {
   await ensureSchema();
   const sql = getSql();
   const rows = await sql`
     SELECT id, name, message, created_at
     FROM guestbook_entries
     ORDER BY created_at DESC
+    LIMIT ${limit ?? GUESTBOOK_PAGE_SIZE}
+    OFFSET ${offset ?? 0}
   `;
   return rows.map((row) => ({
     id: row.id as number,

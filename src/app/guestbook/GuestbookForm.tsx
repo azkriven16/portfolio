@@ -28,6 +28,17 @@ export function GuestbookForm() {
 
   return (
     <form ref={formRef} action={formAction} className="mb-12">
+      {/* Honeypot: hidden from real visitors, bots fill it blindly. Never remove
+          the name/tabIndex/autoComplete combo below — that's what keeps it invisible
+          to people while still being a normal field to a scripted form-filler. */}
+      <input
+        type="text"
+        name="website"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", opacity: 0 }}
+      />
       <div className="flex flex-col gap-3">
         <input
           type="text"

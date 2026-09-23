@@ -10,5 +10,6 @@ Source of truth is the checkbox in each file. Update it when an item lands.
 | [02-not-real.md](02-not-real.md) | Things that claim to work but don't, or contradict each other |
 | [03-missing.md](03-missing.md) | SEO, accessibility, tooling, features that don't exist yet |
 | [04-cleanup.md](04-cleanup.md) | Dead code, unused deps, leftovers |
+| [05-features.md](05-features.md) | Suggested features and follow-ups, not yet started |
 
 Audit date: 2026-09-19. Verified with `tsc --noEmit`, `next build`, and a `curl` sweep of every route.

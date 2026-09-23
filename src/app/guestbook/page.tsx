@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getGuestbookEntries } from "@/lib/db";
+import { getGuestbookEntries, getGuestbookCount, GUESTBOOK_PAGE_SIZE } from "@/lib/db";
 import { GuestbookForm } from "./GuestbookForm";
 
 export const dynamic = "force-dynamic";
@@ -14,8 +14,20 @@ function initials(name: string) {
   return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
 }
 
-export default async function GuestbookPage() {
-  const entries = await getGuestbookEntries();
+export default async function GuestbookPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const { page: pageParam } = await searchParams;
+  const page = Math.max(1, Number(pageParam) || 1);
+  const offset = (page - 1) * GUESTBOOK_PAGE_SIZE;
+
+  const [entries, total] = await Promise.all([
+    getGuestbookEntries({ offset }),
+    getGuestbookCount(),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(total / GUESTBOOK_PAGE_SIZE));
 
   return (
     <main className="max-w-2xl mx-auto px-6 pt-16 pb-32">
@@ -34,7 +46,8 @@ export default async function GuestbookPage() {
 
         <div style={{ borderTop: "1px solid var(--c-border-2)", paddingTop: "2rem" }}>
           <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--c-text-4)", marginBottom: "1.5rem" }}>
-            {entries.length} messages
+            {total} message{total !== 1 ? "s" : ""}
+            {totalPages > 1 ? ` — page ${page} of ${totalPages}` : ""}
           </p>
           <div className="space-y-6">
             {entries.map((entry) => (
@@ -64,6 +77,33 @@ export default async function GuestbookPage() {
               </div>
             ))}
           </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between gap-3 mt-8">
+              {page > 1 ? (
+                <Link
+                  href={page - 1 === 1 ? "/guestbook" : `/guestbook?page=${page - 1}`}
+                  style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--c-text-3)", letterSpacing: "0.04em" }}
+                  className="hover:!text-[var(--c-text-2)] transition-colors duration-150"
+                >
+                  ← newer
+                </Link>
+              ) : (
+                <span />
+              )}
+              {page < totalPages ? (
+                <Link
+                  href={`/guestbook?page=${page + 1}`}
+                  style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--c-text-3)", letterSpacing: "0.04em" }}
+                  className="hover:!text-[var(--c-text-2)] transition-colors duration-150"
+                >
+                  older →
+                </Link>
+              ) : (
+                <span />
+              )}
+            </div>
+          )}
         </div>
       </div>
     </main>

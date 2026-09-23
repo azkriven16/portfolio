@@ -1,10 +1,13 @@
 import Link from "next/link";
-import { posts } from "@/data/posts";
+import { posts, readingTime } from "@/data/posts";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Blog — Euger Bonete Jr",
   description: "Thoughts on web development, React, and building things.",
+  alternates: {
+    types: { "application/rss+xml": "/feed.xml" },
+  },
 };
 
 function formatDate(dateStr: string) {
@@ -27,7 +30,16 @@ export default function BlogPage() {
           ← back
         </Link>
 
-        <h1 className="mb-2">Blog</h1>
+        <div className="flex items-baseline justify-between gap-3 mb-2">
+          <h1>Blog</h1>
+          <a
+            href="/feed.xml"
+            style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--c-text-4)", letterSpacing: "0.04em" }}
+            className="hover:!text-[var(--c-text-2)] transition-colors duration-150"
+          >
+            RSS
+          </a>
+        </div>
         <p style={{ color: "var(--c-text-3)", fontSize: "0.9rem" }} className="mb-10">
           Thoughts on web development, React, and building things.
         </p>
@@ -38,7 +50,7 @@ export default function BlogPage() {
               <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 mb-1">
                 <span className="post-title">{post.title}</span>
                 <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--c-text-4)", flexShrink: 0 }}>
-                  {formatDate(post.date)}
+                  {formatDate(post.date)} · {readingTime(post.content)} min read
                 </span>
               </div>
               <p style={{ color: "var(--c-text-3)", fontSize: "0.88rem", lineHeight: "1.6" }}>
