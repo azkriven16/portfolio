@@ -26,7 +26,7 @@ Audit date: 2026-09-23. Read through routes, data, and components as they stand 
 ## Projects
 
 - [ ] **F10** No screenshots on any project (already tracked as N6). Worth doing alongside F3 (OG images) since both need real images per project.
-- [ ] **F11** No tech-stack badges/filtering on `/projects` — you list stack in the bullets/prose, but a visitor scanning for "does this person know Supabase" has to read every card.
+- [~] **F11** Added tech-stack pill tags under each card on `/projects` (extracted a shared `TechTags.tsx`, also now used on the detail page instead of its old inline-duplicated version). Verified they render (`Next.js`/`Supabase`/`Cloudflare` all found in the list page HTML) and the full build succeeds. **Remaining:** no actual *filtering* — visitors can now scan for "Supabase" but can't click a tag to filter the list. Worth adding once there are enough projects that scanning stops being enough (currently only 5).
 
 ## Nice-to-have / lower priority
 
