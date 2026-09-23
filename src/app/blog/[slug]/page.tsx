@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { posts } from "@/data/posts";
+import { posts, readingTime } from "@/data/posts";
 import type { Metadata } from "next";
 import InlineMarkdown from "@/components/ui/InlineMarkdown";
 
@@ -39,7 +39,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
         <div className="mb-8">
           <h1 className="mb-2" style={{ fontSize: "1.6rem" }}>{post.title}</h1>
           <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--c-text-4)" }}>
-            {formatDate(post.date)}
+            {formatDate(post.date)} · {readingTime(post.content)} min read
           </span>
         </div>
 

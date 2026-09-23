@@ -15,9 +15,13 @@ Personal portfolio site built with Next.js 16, Tailwind CSS v4, and TypeScript. 
 - Fixed chrome sidebar with live clock and GitHub activity
 - WebGL grain overlay via OGL
 - Command palette (⌘K / Ctrl+K)
-- Guestbook UI (entries are client-side only for now — no database yet)
-- Static blog with inline code and link support, sourced from `src/data/posts.ts`
+- Guestbook backed by Neon Postgres (`src/lib/db.ts`), with a honeypot field and
+  a per-IP rate limit against spam
+- Static blog with inline code/link support and reading-time estimates, sourced
+  from `src/data/posts.ts`, plus an RSS feed at `/feed.xml`
 - Project pages with detail view
+- Vercel Analytics + Speed Insights
+- `Person`/`WebSite` JSON-LD for richer search results
 - Custom mobile tab bar with anchor-based active detection
 - Fully responsive
 
@@ -26,8 +30,8 @@ Personal portfolio site built with Next.js 16, Tailwind CSS v4, and TypeScript. 
 ```
 src/
 ├── app/                  # Next.js App Router pages
-│   ├── blog/             # Blog list + [slug] pages
-│   ├── guestbook/        # Guestbook (client-side state)
+│   ├── blog/             # Blog list + [slug] pages, feed.xml RSS route
+│   ├── guestbook/        # Guestbook (Neon-backed, server actions)
 │   ├── projects/[slug]/  # Project detail pages
 │   └── side-projects/    # Featured side projects
 ├── components/
@@ -44,6 +48,19 @@ src/
 | --- | --- |
 | `NEXT_PUBLIC_BASE_URL` | Canonical site URL for the sitemap, `robots.txt` and OpenGraph metadata. Defaults to `https://euger.vercel.app`. |
 | `DATABASE_URL` | Neon Postgres connection string backing the guestbook (`src/lib/db.ts`). Without it, `/guestbook` and the guestbook count in `FixedChrome` error. Set via the Neon integration in Vercel's Storage tab, or manually at [neon.tech](https://neon.tech). |
+
+## Guestbook moderation
+
+There's no admin UI. To remove an entry, open the Neon console (Vercel dashboard →
+Storage → the connected database → Tables → `guestbook_entries`) and delete the row
+directly, or run:
+
+```sql
+DELETE FROM guestbook_entries WHERE id = <id>;
+```
+
+Spam is filtered at submission time (honeypot field + a 30s per-IP rate limit in
+`src/app/guestbook/actions.ts`), but nothing scans existing rows after the fact.
 
 ## Running locally
 
