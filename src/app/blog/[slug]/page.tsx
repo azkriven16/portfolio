@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { posts, readingTime } from "@/data/posts";
 import type { Metadata } from "next";
 import InlineMarkdown from "@/components/ui/InlineMarkdown";
+import CodeBlock from "@/components/ui/CodeBlock";
+import { parseBlocks } from "@/lib/markdown";
 
 export function generateStaticParams() {
   return posts.map((p) => ({ slug: p.slug }));
@@ -26,7 +28,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   const post = posts.find((p) => p.slug === slug);
   if (!post) notFound();
 
-  const paragraphs = post.content.trim().split("\n\n");
+  const blocks = parseBlocks(post.content);
 
   return (
     <main className="max-w-2xl mx-auto px-6 pt-16 pb-32">
@@ -44,11 +46,15 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
         </div>
 
         <div className="space-y-5">
-          {paragraphs.map((para, i) => (
-            <p key={i} style={{ color: "var(--c-text-2)", fontSize: "0.95rem", lineHeight: "1.85" }}>
-              <InlineMarkdown text={para} />
-            </p>
-          ))}
+          {blocks.map((block, i) =>
+            block.type === "code" ? (
+              <CodeBlock key={i} code={block.text} lang={block.lang} />
+            ) : (
+              <p key={i} style={{ color: "var(--c-text-2)", fontSize: "0.95rem", lineHeight: "1.85" }}>
+                <InlineMarkdown text={block.text} />
+              </p>
+            ),
+          )}
         </div>
       </div>
     </main>

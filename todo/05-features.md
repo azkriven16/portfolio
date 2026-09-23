@@ -20,7 +20,7 @@ Audit date: 2026-09-23. Read through routes, data, and components as they stand 
 
 ## Blog
 
-- [ ] **F8** Posts are a hardcoded array with raw content strings and no syntax highlighting — fine for the current three posts, but if you write anything code-heavy, `InlineMarkdown` only handles inline code spans and links, not fenced code blocks. Worth extending (or moving posts to MDX) before that becomes a problem.
+- [~] **F8** Added fenced-code-block support: `src/lib/markdown.ts` (`parseBlocks`) splits post content into paragraphs and ` ```lang ` blocks before `InlineMarkdown` ever sees it, so a fenced block no longer gets mangled by paragraph-splitting or the inline-code regex; `CodeBlock.tsx` renders it with the language label, monospace, preserved whitespace, horizontal scroll. Verified against a sample block (paragraphs/code/lang all split correctly) and confirmed the build/existing posts are unaffected (none currently use fences). **Remaining:** this is layout only, no actual syntax coloring — that needs a highlighter (e.g. Shiki) and is worth doing once you actually write a code-heavy post.
 - [x] **F9** Added a `readingTime()` helper (`src/data/posts.ts`, ~200wpm) shown on both `/blog` and each post page next to the date. Tags/categories/search still not done — only worth it once there are more than ~6 posts.
 
 ## Projects
