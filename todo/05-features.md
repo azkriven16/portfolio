@@ -9,7 +9,7 @@ Audit date: 2026-09-23. Read through routes, data, and components as they stand 
 ## High impact, low effort
 
 - [x] **F2** Added `@vercel/analytics` + `@vercel/speed-insights`, dropped into `layout.tsx`. Visitor counts and Core Web Vitals will show up in the Vercel dashboard once this deploys — no dashboard toggle needed on the free tier.
-- [ ] **F3** No `opengraph-image` (already flagged as M8) — link previews on Discord/Twitter/Slack/iMessage show text only. `next/og`'s `ImageResponse` can generate one per route (home, each project, each blog post) without needing a design tool.
+- [x] **F3** Added generated `opengraph-image` (via `next/og`'s `ImageResponse`) to home, `/projects`, each project detail page, `/blog`, each post, and `/side-projects` — a shared dark-theme card (`src/lib/og.tsx`) with eyebrow/title/subtitle, matching the site's actual colors. All per-slug images are statically prerendered (`generateStaticParams` on each `opengraph-image.tsx`, confirmed in the build output as SSG, not on-demand). Verified visually — both the home and project images render correctly and read as intentional design, not a placeholder.
 - [x] **F4** Added a `Person`/`WebSite` JSON-LD block in `layout.tsx` (job title, description, `sameAs` linking GitHub/LinkedIn). Verified it renders in page source.
 - [x] **F5** Added `/feed.xml` (`src/app/feed.xml/route.ts`, a Route Handler, `force-static`) covering all posts sorted by date. Linked via `alternates.types` on `/blog`'s metadata and a visible "RSS" link next to the Blog heading. Verified the XML is well-formed and all four posts appear.
 
