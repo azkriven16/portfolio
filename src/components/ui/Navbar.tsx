@@ -55,8 +55,8 @@ const navMenus = [
     blurb: {
       eyebrow: "Off the clock",
       Icon: BookOpen,
-      title: "Notes & hellos",
-      text: "Writing about web dev and building things, plus a guestbook for anyone who wants to say hi.",
+      title: "Notes, experiments & more",
+      text: "Writing about web dev, side projects built for fun, the tools I use, and a guestbook for anyone who wants to say hi.",
     },
     items: [
       { label: "Blog", href: "/blog", Icon: PenLine, description: "Notes on web development and building things" },

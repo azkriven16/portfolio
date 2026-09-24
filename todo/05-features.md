@@ -25,7 +25,7 @@ Audit date: 2026-09-23. Read through routes, data, and components as they stand 
 
 ## Projects
 
-- [x] **F10** Done as N6: screenshots on every project detail page. The `/projects` list and the homepage cards still don't show thumbnails. Could add them later if the list feels too text-heavy.
+- [x] **F10** Done as N6: screenshots on every project detail page. The `/projects` list now shows each one as a thumbnail too, to the left of the text from 640px up and full width above it on phones. Decorative `alt=""`, because the title sits right next to it. Also: `.post-link` now highlights on keyboard focus as well as hover, and the Explore menu description mentions Side Projects and Uses.
 - [~] **F11** Added tech-stack pill tags under each card on `/projects` (extracted a shared `TechTags.tsx`, also now used on the detail page instead of its old inline-duplicated version). Verified they render (`Next.js`/`Supabase`/`Cloudflare` all found in the list page HTML) and the full build succeeds. **Remaining:** no actual *filtering* — visitors can now scan for "Supabase" but can't click a tag to filter the list. Worth adding once there are enough projects that scanning stops being enough (currently only 5).
 
 ## Nice-to-have / lower priority
