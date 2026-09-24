@@ -1,5 +1,5 @@
 import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
-import { guestbookEntries as seedEntries, type GuestbookEntry } from "@/data/guestbook";
+import type { GuestbookEntry } from "@/data/guestbook";
 
 export type { GuestbookEntry };
 
@@ -31,15 +31,6 @@ async function ensureSchema() {
           created_at TIMESTAMPTZ NOT NULL DEFAULT now()
         )
       `;
-      const rows = await sql`SELECT COUNT(*)::int AS count FROM guestbook_entries`;
-      if (rows[0].count === 0) {
-        for (const entry of seedEntries) {
-          await sql`
-            INSERT INTO guestbook_entries (name, message, created_at)
-            VALUES (${entry.name}, ${entry.message}, ${entry.date}::timestamptz)
-          `;
-        }
-      }
       await sql`
         CREATE TABLE IF NOT EXISTS rate_limits (
           scope TEXT NOT NULL,
