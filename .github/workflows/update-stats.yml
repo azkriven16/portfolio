@@ -48,11 +48,23 @@ jobs:
             PAGE=$((PAGE + 1))
           done
 
+          # Contributions per calendar month, last 12 months (current month partial).
+          QUERY='query($login:String!){ user(login:$login){ contributionsCollection{ contributionCalendar{ weeks{ contributionDays{ date contributionCount } } } } } }'
+          BODY=$(jq -n --arg q "$QUERY" '{query: $q, variables: {login: "azkriven16"}}')
+          CAL=$(api -X POST -d "$BODY" https://api.github.com/graphql)
+          MONTHS=$(echo "$CAL" | jq -c '
+            [.data.user.contributionsCollection.contributionCalendar.weeks[].contributionDays[]]
+            | group_by(.date[:7])
+            | map({month: .[0].date[:7], count: (map(.contributionCount) | add)})
+            | .[-12:]')
+          echo "$MONTHS" | jq -e 'type == "array" and length == 12' > /dev/null || { echo "Unexpected contributions response: $CAL"; exit 1; }
+
           cat > src/data/stats.json << EOF
           {
             "followers": $FOLLOWERS,
             "repos": $REPOS,
             "stars": $STARS,
+            "contributions": $MONTHS,
             "updatedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           EOF

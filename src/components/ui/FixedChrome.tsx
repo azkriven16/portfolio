@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { posts } from "@/data/posts";
+import rawStats from "@/data/stats.json";
 
 const LABEL: React.CSSProperties = {
   fontFamily: "var(--font-mono)",
@@ -37,37 +38,77 @@ const DIVIDER = (
   <div style={{ width: "1px", height: "1.5rem", background: "var(--c-border)", alignSelf: "center" }} />
 );
 
-function GitHubCommitsWithDividers({ username }: { username: string }) {
-  const [count, setCount] = useState<number | null>(null);
+const BAR_W = 7;
+const BAR_GAP = 3;
+const CHART_H = 34;
 
-  useEffect(() => {
-    fetch(`https://api.github.com/users/${username}/events/public`)
-      .then((r) => r.json())
-      .then((events: { type: string; created_at: string }[]) => {
-        const today = new Date().toISOString().slice(0, 10);
-        const pushesToday = events.filter(
-          (e) => e.type === "PushEvent" && e.created_at.slice(0, 10) === today,
-        );
-        setCount(pushesToday.length);
-      })
-      .catch(() => {});
-  }, [username]);
+// "2025-11" -> "Nov 2025". UTC so server and client render the same string.
+const monthLabel = (month: string) =>
+  new Date(`${month}-01T00:00:00Z`).toLocaleString("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
 
-  if (!count) return null;
+// Contributions per month for the last 12 months, written daily by the
+// update-stats workflow (GraphQL needs a token, so it can't run in the browser).
+function GitHubActivity() {
+  const months = rawStats.contributions;
+  const [hovered, setHovered] = useState<number | null>(null);
+  if (!months?.length) return null;
+
+  const total = months.reduce((sum, m) => sum + m.count, 0);
+  const max = Math.max(...months.map((m) => m.count), 1);
+  const width = months.length * BAR_W + (months.length - 1) * BAR_GAP;
+  const last = months.length - 1;
+  const caption =
+    hovered === null
+      ? `${monthLabel(months[0].month)} – ${monthLabel(months[last].month)}`
+      : `${monthLabel(months[hovered].month)}: ${months[hovered].count}${hovered === last ? " so far" : ""}`;
 
   return (
     <>
       {DIVIDER}
       <div>
-        <div style={LABEL}>GitHub / Today</div>
-        <div style={{ display: "flex", alignItems: "baseline", gap: "0.3rem" }}>
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: "2.4rem", fontWeight: 700, color: "var(--c-text-2)", letterSpacing: "-0.02em", lineHeight: 1 }}>
-            {count}
-          </span>
-          <span style={{ ...MONO, fontSize: "0.52rem", color: "var(--c-text-4)" }}>
-            push{count !== 1 ? "es" : ""}
-          </span>
+        <div style={LABEL}>GitHub contributions</div>
+        <div style={{ fontFamily: "var(--font-mono)", fontSize: "2.4rem", fontWeight: 700, color: "var(--c-text-2)", letterSpacing: "-0.02em", lineHeight: 1, marginBottom: "0.6rem" }}>
+          {total.toLocaleString("en-US")}
         </div>
+        <svg
+          width={width}
+          height={CHART_H + 1}
+          viewBox={`0 0 ${width} ${CHART_H + 1}`}
+          aria-hidden="true"
+          style={{ display: "block", overflow: "visible" }}
+          onMouseLeave={() => setHovered(null)}
+        >
+          <line x1={0} x2={width} y1={CHART_H + 0.5} y2={CHART_H + 0.5} stroke="var(--c-border)" />
+          {months.map((m, i) => {
+            const x = i * (BAR_W + BAR_GAP);
+            // Empty months keep a 1px stub so "zero" doesn't read as "missing".
+            const h = m.count === 0 ? 1 : Math.max(3, (m.count / max) * CHART_H);
+            const y = CHART_H - h;
+            const r = Math.min(2, h / 2);
+            const fill = hovered === i ? "var(--c-text)" : "var(--c-text-3)";
+            return (
+              <g key={m.month} onMouseEnter={() => setHovered(i)}>
+                {/* Full-height hit area, wider than the bar. */}
+                <rect x={x - BAR_GAP / 2} y={0} width={BAR_W + BAR_GAP} height={CHART_H} fill="transparent" />
+                <path
+                  d={`M${x},${CHART_H} V${y + r} Q${x},${y} ${x + r},${y} H${x + BAR_W - r} Q${x + BAR_W},${y} ${x + BAR_W},${y + r} V${CHART_H} Z`}
+                  fill={fill}
+                  style={{ transition: "fill 0.15s" }}
+                />
+              </g>
+            );
+          })}
+        </svg>
+        <div style={{ ...MONO, fontSize: "0.5rem", color: "var(--c-text-4)", marginTop: "0.4rem", textTransform: "none", letterSpacing: "0.04em" }}>
+          {caption}
+        </div>
+        <ul className="sr-only">
+          {months.map((m) => (
+            <li key={m.month}>
+              {monthLabel(m.month)}: {m.count} contributions
+            </li>
+          ))}
+        </ul>
       </div>
       {DIVIDER}
     </>
@@ -280,7 +321,7 @@ export default function FixedChrome() {
       </div>
 
       {/* Divider */}
-      <GitHubCommitsWithDividers username="azkriven16" />
+      <GitHubActivity />
 
       {/* Clock + location — bottom */}
       <div>
