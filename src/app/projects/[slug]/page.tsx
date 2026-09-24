@@ -107,7 +107,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid var(--c-border)", marginBottom: "2rem" }}>
           <Image
             src={project.image}
-            alt={project.title}
+            alt={`Screenshot of the ${project.title} homepage`}
             width={1200}
             height={630}
             style={{ width: "100%", height: "auto", display: "block" }}
