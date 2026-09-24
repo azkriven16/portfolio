@@ -23,6 +23,5 @@ Audit date: 2026-09-19. Verified with `tsc --noEmit`, `next build`, and a `curl`
 | B9 Vercel previews | open | Needs old Neon `preview/*` branches deleted (steps in 01) |
 | F8 Syntax highlighting | partial | Code blocks render; colors wait for a code-heavy post |
 | F11 Tag filtering | partial | Tags shown; filtering not needed at 5 projects |
-| F13 GitHub heatmap | open | Side panel, wide screens only |
 | F14 PWA manifest | open | Suggest skipping |
 | M10, F12 content | Euger | Review side-project wording; add hardware to `/uses` |
