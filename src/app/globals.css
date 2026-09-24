@@ -207,8 +207,21 @@ hr {
   transition: color 0.15s;
 }
 
-.post-link:hover .post-title {
+.post-link:hover .post-title,
+.post-link:focus-visible .post-title {
   color: var(--c-text);
+}
+
+.project-thumb {
+  border: 1px solid var(--c-border);
+  border-radius: 0.4rem;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+
+.post-link:hover .project-thumb,
+.post-link:focus-visible .project-thumb {
+  border-color: var(--c-text-4);
 }
 
 /* ── Navigation menu (hover dropdowns in the top bar) ── */
