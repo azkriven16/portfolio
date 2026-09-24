@@ -1,6 +1,19 @@
-export default function CodeBlock({ code, lang }: { code: string; lang?: string }) {
+import { bundledLanguages, codeToHtml } from "shiki";
+
+// Highlighted at build time (blog posts are statically rendered), so no
+// highlighter ships to the browser. Shiki emits both themes as CSS variables
+// per token; globals.css picks one based on the <html> theme class.
+export default async function CodeBlock({ code, lang }: { code: string; lang?: string }) {
+  const language = lang && lang in bundledLanguages ? lang : "text";
+  const html = await codeToHtml(code, {
+    lang: language,
+    // The "-default" variants keep comments readable on --c-surface in both themes.
+    themes: { light: "github-light-default", dark: "github-dark-default" },
+    defaultColor: false,
+  });
+
   return (
-    <div style={{ position: "relative" }}>
+    <div className="code-block" style={{ position: "relative" }}>
       {lang && (
         <span
           style={{
@@ -17,21 +30,7 @@ export default function CodeBlock({ code, lang }: { code: string; lang?: string 
           {lang}
         </span>
       )}
-      <pre
-        style={{
-          background: "var(--c-surface)",
-          border: "1px solid var(--c-border)",
-          borderRadius: "0.5rem",
-          padding: "1rem",
-          overflowX: "auto",
-          fontSize: "0.82rem",
-          lineHeight: "1.6",
-          fontFamily: "var(--font-mono)",
-          color: "var(--c-text-2)",
-        }}
-      >
-        <code>{code}</code>
-      </pre>
+      <div dangerouslySetInnerHTML={{ __html: html }} />
     </div>
   );
 }
