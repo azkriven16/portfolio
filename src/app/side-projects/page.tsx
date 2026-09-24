@@ -42,7 +42,7 @@ export default function SideProjectsPage() {
                       fontFamily: "var(--font-mono)",
                       fontSize: "0.6rem",
                       letterSpacing: "0.06em",
-                      color: "#f59e0b",
+                      color: "var(--c-warn)",
                       background: "rgba(245,158,11,0.1)",
                       border: "1px solid rgba(245,158,11,0.3)",
                       borderRadius: "0.25rem",

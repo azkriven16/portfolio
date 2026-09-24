@@ -80,8 +80,11 @@ export default function Bio() {
           <Badge>React</Badge>
           <Badge>Next.js</Badge>
           <Badge>TypeScript</Badge>
+          <Badge>Tailwind CSS</Badge>
           <Badge>Node.js</Badge>
+          <Badge>Supabase</Badge>
           <Badge>MongoDB</Badge>
+          <Badge>Cloudflare</Badge>
         </div>
       </div>
 
