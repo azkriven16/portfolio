@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useSyncExternalStore } from "react";
 
 type Theme = "dark" | "light";
 
@@ -9,17 +9,21 @@ const ThemeContext = createContext<{ theme: Theme; toggle: () => void }>({
   toggle: () => {},
 });
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("dark");
+// The inline script in layout.tsx has already put the class on <html>, so the
+// class is the source of truth; React just subscribes to it.
+function subscribe(onChange: () => void) {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+  return () => observer.disconnect();
+}
 
-  // The inline script in layout.tsx has already put the class on <html>;
-  // sync React state with it instead of re-applying the theme.
-  useEffect(() => {
-    setTheme(document.documentElement.classList.contains("light") ? "light" : "dark");
-  }, []);
+const getTheme = (): Theme =>
+  document.documentElement.classList.contains("light") ? "light" : "dark";
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const theme = useSyncExternalStore<Theme>(subscribe, getTheme, () => "dark");
 
   function apply(t: Theme) {
-    setTheme(t);
     const root = document.documentElement;
     root.classList.remove("light", "dark");
     root.classList.add(t);
