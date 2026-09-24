@@ -87,11 +87,10 @@ export default function Bio() {
 
       <div className="space-y-4" style={{ fontSize: "0.95rem" }}>
         <p>
-          I started coding about 5 years ago and graduated with a{" "}
-Bachelor of Science in Information Technology{" "}
-          in 2025. I specialize in React development, crafting beautiful and
-          interactive digital experiences from creative concepts and business
-          ideas.
+          I started coding in 2021 and graduated with a Bachelor of Science
+          in Information Technology in 2025. I specialize in React development,
+          crafting beautiful and interactive digital experiences from creative
+          concepts and business ideas.
         </p>
         <p>
           I leverage{" "}
@@ -149,9 +148,7 @@ Bachelor of Science in Information Technology{" "}
           >
             Ciptax Pro
           </a>{" "}
-          — and worked part-time at{" "}
-          Rocketshyft{" "}
-          and interned at{" "}
+          — and interned at{" "}
           <a
             href="https://digipay.ph/"
             target="_blank"
