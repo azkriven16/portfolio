@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 type AnimHandle = { startAnimation: () => void; stopAnimation: () => void };
 
@@ -170,15 +170,19 @@ const bottomLinks = [
   { label: "Contact", href: "/#contact" },
 ];
 
+const noopSubscribe = () => () => {};
+
 export default function Navbar() {
   const { theme, toggle } = useTheme();
   const pathname = usePathname();
   const activeAnchor = useActiveAnchor(ANCHOR_IDS);
 
-  const [shortcut, setShortcut] = useState("Ctrl K");
-  useEffect(() => {
-    if (/Mac|iPhone|iPad/.test(navigator.platform)) setShortcut("⌘K");
-  }, []);
+  // Server renders "Ctrl K"; the client swaps in "⌘K" on Apple platforms after hydration.
+  const shortcut = useSyncExternalStore(
+    noopSubscribe,
+    () => (/Mac|iPhone|iPad/.test(navigator.platform) ? "⌘K" : "Ctrl K"),
+    () => "Ctrl K"
+  );
 
   const logoRef = useRef<AnimHandle>(null);
 
