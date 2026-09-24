@@ -1,8 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
 import type { Metadata } from "next";
-import { projects, projectSlug } from "@/data/projects";
-import TechTags from "@/components/ui/TechTags";
+import { Suspense } from "react";
+import { projects } from "@/data/projects";
+import ProjectList, { ProjectListView } from "./ProjectList";
 
 export const metadata: Metadata = {
   title: "Projects — Euger Bonete Jr",
@@ -26,38 +26,9 @@ export default function ProjectsPage() {
           Client work and products I&apos;ve built.
         </p>
 
-        <ul className="space-y-8" style={{ listStyle: "none", paddingLeft: 0 }}>
-          {projects.map((project) => (
-            <li key={project.title}>
-              <Link href={`/projects/${projectSlug(project)}`} className="post-link">
-                {/* Flex lives on this wrapper: the unlayered `.post-link { display: block }`
-                    would override a Tailwind `flex` utility on the link itself. */}
-                <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-5">
-                  {project.image && (
-                    // Decorative: the title next to it already names the project.
-                    <div className="project-thumb shrink-0 sm:w-[168px]">
-                      <Image
-                        src={project.image}
-                        alt=""
-                        width={1200}
-                        height={630}
-                        sizes="(min-width: 640px) 168px, 100vw"
-                        style={{ width: "100%", height: "auto", display: "block" }}
-                      />
-                    </div>
-                  )}
-                  <div className="min-w-0">
-                    <span className="post-title block mb-1">{project.title}</span>
-                    <p style={{ color: "var(--c-text-3)", fontSize: "0.88rem", lineHeight: "1.6" }} className="mb-2">
-                      {project.description}
-                    </p>
-                    <TechTags tech={project.tech} size="sm" />
-                  </div>
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <Suspense fallback={<ProjectListView items={projects} active={null} />}>
+          <ProjectList />
+        </Suspense>
       </div>
     </main>
   );
