@@ -19,6 +19,7 @@ import {
   PenLine,
   Rocket,
   Search,
+  Wrench,
 } from "lucide-react";
 import {
   NavigationMenu,
@@ -61,6 +62,7 @@ const navMenus = [
       { label: "Blog", href: "/blog", Icon: PenLine, description: "Notes on web development and building things" },
       { label: "Guestbook", href: "/guestbook", Icon: MessageSquare, description: "Leave a message and say hi" },
       { label: "Side Projects", href: "/side-projects", Icon: FlaskConical, description: "Apps and experiments for fun" },
+      { label: "Uses", href: "/uses", Icon: Wrench, description: "The editor, stack and services I use" },
     ],
   },
 ];

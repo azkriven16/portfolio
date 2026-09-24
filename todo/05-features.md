@@ -30,7 +30,7 @@ Audit date: 2026-09-23. Read through routes, data, and components as they stand 
 
 ## Nice-to-have / lower priority
 
-- [ ] **F12** A `/uses` or `/now` page — common in dev portfolios, cheap to build (static data, same shape as `side-projects.ts`), gives returning visitors and recruiters something to check back on.
+- [x] **F12** Added `/uses` (`src/data/uses.ts`, same shape as `side-projects.ts`): editor & terminal, stack, services, and this site's fonts and icons. Linked from the Explore menu, the ⌘K palette and the sitemap, with its own OG image. Every entry is verifiable from this repo, the client projects or the dev machine (VS Code, WSL 2 on Ubuntu). **Euger to add:** hardware and personal apps. They're left out rather than shown as placeholders.
 - [ ] **F13** `FixedChrome`'s GitHub widget only shows today's push count — could expand into a small contribution heatmap (GitHub's public events API supports this) for more visual signal than a single number.
 - [ ] **F14** No PWA manifest (`manifest.ts`) — low value for a portfolio, skip unless you specifically want "Add to Home Screen".
 - [x] **F15** Added a real contact form (`ContactForm.tsx` + `contact-actions.ts`) below the existing mailto/GitHub/LinkedIn links, sending via Resend. Reuses F1's anti-spam pattern (honeypot + rate limit) — and in the process, generalized the guestbook's rate limit into a shared `rate_limits` table (`scope`, `identifier`) in `src/lib/db.ts` instead of two near-identical tables. Verified: `tsc` clean, full build succeeds, the generalized rate-limit table round-tripped against live Neon, form confirmed rendering on the homepage, and a real send through `RESEND_API_KEY` was confirmed delivered.
