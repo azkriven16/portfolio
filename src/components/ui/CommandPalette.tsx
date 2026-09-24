@@ -8,6 +8,7 @@ const commands = [
   { label: "Blog",        hint: "Read the blog",          action: "/blog",       type: "nav" },
   { label: "Guestbook",   hint: "Sign the guestbook",     action: "/guestbook",  type: "nav" },
   { label: "Side Projects", hint: "Apps and experiments", action: "/side-projects", type: "nav" },
+  { label: "Uses",        hint: "Editor, stack, services",  action: "/uses",       type: "nav" },
   { label: "Projects",    hint: "Jump to projects",       action: "/#projects",  type: "nav" },
   { label: "Experience",  hint: "Jump to experience",     action: "/#experience",type: "nav" },
   { label: "Resume",      hint: "Open resume PDF",        action: "/euger_bonete_resume_dev.pdf", type: "link" },
