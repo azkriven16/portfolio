@@ -26,6 +26,7 @@ export const projects: Project[] = [
     tech: ["Next.js", "TypeScript", "Tailwind CSS", "Supabase", "GSAP", "Cloudflare"],
     github: null,
     live: "http://viafide.com/",
+    image: "/projects/viafide.jpg",
     status: "completed",
     featured: true,
   },
@@ -42,6 +43,7 @@ export const projects: Project[] = [
     tech: ["Next.js", "TypeScript", "Tailwind CSS", "Supabase", "Claude AI", "Cloudflare"],
     github: null,
     live: "https://novu.so/",
+    image: "/projects/novu.jpg",
     status: "completed",
   },
   {
@@ -57,6 +59,7 @@ export const projects: Project[] = [
     tech: ["Next.js", "TypeScript", "Tailwind CSS", "Radix UI", "Framer Motion"],
     github: null,
     live: "https://www.ciptaxpro.com/",
+    image: "/projects/ciptax.jpg",
     status: "completed",
   },
   {
@@ -71,6 +74,7 @@ export const projects: Project[] = [
     tech: ["Next.js", "TypeScript", "Tailwind CSS", "Supabase", "Three.js", "Drizzle ORM"],
     github: null,
     live: "https://globaltalentportal.com/",
+    image: "/projects/global-talent-portal.jpg",
     status: "completed",
   },
   {
@@ -86,6 +90,7 @@ export const projects: Project[] = [
     tech: ["React", "TypeScript", "Vite"],
     github: null,
     live: "https://rocketshift.app/",
+    image: "/projects/rocketshyft.jpg",
     status: "completed",
   },
 ];
