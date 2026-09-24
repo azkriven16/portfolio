@@ -18,8 +18,9 @@
 
   --c-text:     #e5e5e5;
   --c-text-2:   #aaaaaa;
-  --c-text-3:   #666666;
-  --c-text-4:   #444444;
+  /* text-3/4 meet WCAG AA (4.5:1) on both --c-bg and --c-surface. */
+  --c-text-3:   #949494;
+  --c-text-4:   #858585;
   --c-text-5:   #3a3a3a;
 
   --c-btn-bg:   #e5e5e5;
@@ -27,6 +28,7 @@
   --c-btn-hover:#ffffff;
 
   --c-success:  #4ade80;
+  --c-warn:     #f59e0b;
 }
 
 :root.light {
@@ -39,8 +41,9 @@
 
   --c-text:     #111111;
   --c-text-2:   #555555;
-  --c-text-3:   #888888;
-  --c-text-4:   #bbbbbb;
+  /* text-3/4 meet WCAG AA (4.5:1) on both --c-bg and --c-surface. */
+  --c-text-3:   #666666;
+  --c-text-4:   #737373;
   --c-text-5:   #cccccc;
 
   --c-btn-bg:   #111111;
@@ -48,6 +51,7 @@
   --c-btn-hover:#333333;
 
   --c-success:  #16a34a;
+  --c-warn:     #92400e;
 }
 
 /* ── Base ── */
