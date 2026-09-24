@@ -35,7 +35,7 @@ export default function BlogPage() {
           <a
             href="/feed.xml"
             style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--c-text-4)", letterSpacing: "0.04em" }}
-            className="hover:!text-[var(--c-text-2)] transition-colors duration-150"
+            className="hover:!text-[var(--c-text-2)] focus-visible:!text-[var(--c-text-2)] transition-colors duration-150"
           >
             RSS
           </a>

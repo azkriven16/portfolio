@@ -8,6 +8,15 @@ export default function NotFound() {
   const { theme } = useTheme();
   const color = theme === "dark" ? "#e5e5e5" : "#111111";
 
+  const highlight = (e: React.SyntheticEvent<HTMLElement>) => {
+    e.currentTarget.style.color = "var(--c-text)";
+    e.currentTarget.style.borderColor = "var(--c-text-3)";
+  };
+  const unhighlight = (e: React.SyntheticEvent<HTMLElement>) => {
+    e.currentTarget.style.color = "var(--c-text-4)";
+    e.currentTarget.style.borderColor = "var(--c-border)";
+  };
+
   return (
     <main
       className="min-h-screen flex flex-col items-center justify-center gap-6"
@@ -52,14 +61,10 @@ export default function NotFound() {
           paddingBottom: "2px",
           transition: "color 0.15s, border-color 0.15s",
         }}
-        onMouseEnter={e => {
-          e.currentTarget.style.color = "var(--c-text)";
-          e.currentTarget.style.borderColor = "var(--c-text-3)";
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.color = "var(--c-text-4)";
-          e.currentTarget.style.borderColor = "var(--c-border)";
-        }}
+        onMouseEnter={highlight}
+        onFocus={highlight}
+        onMouseLeave={unhighlight}
+        onBlur={unhighlight}
       >
         ← back to home
       </Link>

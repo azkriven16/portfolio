@@ -81,7 +81,9 @@ export default function ContactForm() {
               transition: "background 0.15s", opacity: pending ? 0.7 : 1,
             }}
             onMouseEnter={(e) => !pending && (e.currentTarget.style.background = "var(--c-btn-hover)")}
+            onFocus={(e) => !pending && (e.currentTarget.style.background = "var(--c-btn-hover)")}
             onMouseLeave={(e) => !pending && (e.currentTarget.style.background = "var(--c-btn-bg)")}
+            onBlur={(e) => !pending && (e.currentTarget.style.background = "var(--c-btn-bg)")}
           >
             {pending ? "Sending..." : "Send message"}
           </button>

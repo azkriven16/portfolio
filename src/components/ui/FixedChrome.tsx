@@ -265,7 +265,13 @@ export default function FixedChrome() {
           onMouseEnter={(e) =>
             (e.currentTarget.style.color = "var(--c-text-3)")
           }
+          onFocus={(e) =>
+            (e.currentTarget.style.color = "var(--c-text-3)")
+          }
           onMouseLeave={(e) =>
+            (e.currentTarget.style.color = "var(--c-text-5)")
+          }
+          onBlur={(e) =>
             (e.currentTarget.style.color = "var(--c-text-5)")
           }
         >
