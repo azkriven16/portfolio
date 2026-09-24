@@ -29,6 +29,8 @@ export default function CommandPalette() {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
         setOpen((o) => !o);
+        setQuery("");
+        setIndex(0);
       }
       if (e.key === "Escape") setOpen(false);
     };
@@ -39,8 +41,6 @@ export default function CommandPalette() {
   useEffect(() => {
     if (!open) return;
     const previouslyFocused = document.activeElement as HTMLElement | null;
-    setQuery("");
-    setIndex(0);
     const t = setTimeout(() => inputRef.current?.focus(), 0);
     return () => {
       clearTimeout(t);
@@ -52,8 +52,6 @@ export default function CommandPalette() {
     c.label.toLowerCase().includes(query.toLowerCase()) ||
     c.hint.toLowerCase().includes(query.toLowerCase())
   );
-
-  useEffect(() => setIndex(0), [query]);
 
   const run = (cmd: (typeof commands)[number]) => {
     setOpen(false);
@@ -103,7 +101,7 @@ export default function CommandPalette() {
           <input
             ref={inputRef}
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => { setQuery(e.target.value); setIndex(0); }}
             onKeyDown={handleKey}
             aria-label="Search commands"
             placeholder="Search for a command..."

@@ -1,12 +1,12 @@
 # 03 — Missing
 
-- [x] **M1** Added `metadataBase`, OpenGraph + Twitter metadata (in `layout.tsx`) and `robots.ts`. No `opengraph-image` yet, so link previews have text only.
+- [x] **M1** Added `metadataBase`, OpenGraph + Twitter metadata (in `layout.tsx`) and `robots.ts`. Generated `opengraph-image`s were added later (see F3).
 - [x] **M2** Project pages now have `generateMetadata` and `generateStaticParams` (5 pages prerendered).
 - [x] **M3** Sitemap includes `/projects/*`; URL constants live in `src/lib/site.ts`. Real domain confirmed by Euger: `https://euger.vercel.app` (now the default in `src/lib/site.ts`).
 - [x] **M4** Theme flash fixed with a pre-paint script in `layout.tsx`; `ThemeProvider` syncs from it. Default stays dark (dark-first design), so `prefers-color-scheme` is deliberately not used.
 - [x] **M5** `prefers-reduced-motion` CSS added. Grain no longer redraws every frame when static (it was re-rendering at 60fps even with `animated={false}`).
 - [~] **M6** Palette now has `role="dialog"`/`aria-modal`/labels and restores focus on close. Shortcut hint is platform-aware, navbar logo uses `Link`. **Remaining:** true focus trap, keyboard-focus equivalents for hover-only styles.
-- [ ] **M7** No ESLint config, no lint script, no CI build/typecheck. Needs `eslint` + `eslint-config-next` (flat config; `next lint` is gone) and a workflow step.
-- [ ] **M8** No contact form, no analytics, no `opengraph-image` (optional, product decisions).
+- [x] **M7** Added `eslint.config.mjs` (flat config: `eslint-config-next` core-web-vitals + typescript), `pnpm lint` and `pnpm typecheck` scripts, and `.github/workflows/ci.yml` (lint → typecheck → build on every PR and push to `main`). ESLint is pinned to v9: v10 crashes `eslint-plugin-react` (`getFilename is not a function`). Fixed what the linter found: four `set-state-in-effect` errors (`ThemeProvider` and the Navbar shortcut label now use `useSyncExternalStore`; the ⌘K palette resets its query in event handlers, not effects), a JSX comment text node in `FixedChrome`, and a stale-ref cleanup in `FuzzyText`. Verified: the CI steps pass in a clean copy with no `.env.local` (the build needs no secrets). In headless Chromium, theme toggle and reload persistence work, the palette opens focused and empty, and the shortcut shows ⌘K on Mac and Ctrl K elsewhere.
+- [x] **M8** All three shipped: analytics (F2), `opengraph-image` (F3), contact form (F15).
 - [ ] **M9** Contrast: dark-theme `--c-text-3` (`#666` on `#111`, about 3.3:1) and `--c-text-4` are below WCAG AA for small text. Visual decision.
 - [x] **M10** `/side-projects` page added (Explore menu, ⌘K palette, sitemap). Six repos from github.com/azkriven16, copy taken from their READMEs. Demos for Animinji, eugui and ChatApp returned 404, so those link to code only. **Euger to review** which projects to feature and the wording (`src/data/side-projects.ts`).

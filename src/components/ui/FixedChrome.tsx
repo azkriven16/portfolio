@@ -251,7 +251,7 @@ export default function FixedChrome() {
             whiteSpace: "nowrap",
           }}
         >
-          // Yare yare daze...
+          {"// Yare yare daze..."}
         </span>
         <Link
           href="/sitemap.xml"
