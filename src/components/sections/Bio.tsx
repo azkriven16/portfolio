@@ -51,7 +51,9 @@ function SocialLink({
           : "social-link inline-flex items-center gap-1.5"
       }
       onMouseEnter={() => ref.current?.startAnimation()}
+      onFocus={() => ref.current?.startAnimation()}
       onMouseLeave={() => ref.current?.stopAnimation()}
+      onBlur={() => ref.current?.stopAnimation()}
     >
       <Icon ref={ref} size={14} /> {children}
     </a>

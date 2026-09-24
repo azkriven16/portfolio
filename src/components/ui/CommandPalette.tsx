@@ -21,6 +21,7 @@ export default function CommandPalette() {
   const [query, setQuery] = useState("");
   const [index, setIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   // Open on ⌘K / Ctrl+K
@@ -70,6 +71,22 @@ export default function CommandPalette() {
     if (e.key === "Enter" && filtered[index]) run(filtered[index]);
   };
 
+  // Keep Tab / Shift+Tab cycling inside the panel while it's open.
+  const trapFocus = (e: React.KeyboardEvent) => {
+    if (e.key !== "Tab" || !panelRef.current) return;
+    const focusable = panelRef.current.querySelectorAll<HTMLElement>("input, button");
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
+
   if (!open) return null;
 
   return (
@@ -82,7 +99,9 @@ export default function CommandPalette() {
       onClick={() => setOpen(false)}
     >
       <div
+        ref={panelRef}
         onClick={(e) => e.stopPropagation()}
+        onKeyDown={trapFocus}
         style={{
           width: "100%",
           maxWidth: "480px",
@@ -138,6 +157,7 @@ export default function CommandPalette() {
                 key={cmd.label}
                 onClick={() => run(cmd)}
                 onMouseEnter={() => setIndex(i)}
+                onFocus={() => setIndex(i)}
                 style={{
                   width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
                   padding: "0.65rem 1rem", border: "none", cursor: "pointer", textAlign: "left",

@@ -94,15 +94,18 @@ function AnimIconBtn({
   onClick?: () => void;
   children: React.ReactNode;
 }) {
-  const enter = (e: React.MouseEvent<HTMLElement>) => {
+  const enter = (e: React.SyntheticEvent<HTMLElement>) => {
     (e.currentTarget as HTMLElement).style.color = "var(--c-text-2)";
     (e.currentTarget as HTMLElement).style.background = "var(--c-surface)";
     iconRef.current?.startAnimation();
   };
-  const leave = (e: React.MouseEvent<HTMLElement>) => {
+  const leave = (e: React.SyntheticEvent<HTMLElement>) => {
     (e.currentTarget as HTMLElement).style.color = "var(--c-text-3)";
     (e.currentTarget as HTMLElement).style.background = "transparent";
     iconRef.current?.stopAnimation();
+  };
+  const focus = (e: React.FocusEvent<HTMLElement>) => {
+    if (e.currentTarget.matches(":focus-visible")) enter(e);
   };
 
   if (onClick)
@@ -112,7 +115,9 @@ function AnimIconBtn({
         style={ICON_BTN}
         onClick={onClick}
         onMouseEnter={enter}
+        onFocus={focus}
         onMouseLeave={leave}
+        onBlur={leave}
       >
         {children}
       </button>
@@ -125,7 +130,9 @@ function AnimIconBtn({
       target={external ? "_blank" : undefined}
       rel={external ? "noopener noreferrer" : undefined}
       onMouseEnter={enter}
+      onFocus={focus}
       onMouseLeave={leave}
+      onBlur={leave}
     >
       {children}
     </a>
@@ -185,6 +192,15 @@ export default function Navbar() {
       new KeyboardEvent("keydown", { key: "k", metaKey: true, bubbles: true }),
     );
 
+  const highlightSearch = (e: React.SyntheticEvent<HTMLElement>) => {
+    e.currentTarget.style.color = "var(--c-text-2)";
+    e.currentTarget.style.borderColor = "var(--c-text-3)";
+  };
+  const unhighlightSearch = (e: React.SyntheticEvent<HTMLElement>) => {
+    e.currentTarget.style.color = "var(--c-text-3)";
+    e.currentTarget.style.borderColor = "var(--c-border)";
+  };
+
   return (
     <>
       {/* ── Top navbar ── */}
@@ -213,7 +229,9 @@ export default function Navbar() {
                 padding: 0,
               }}
               onMouseEnter={() => logoRef.current?.startAnimation()}
+              onFocus={() => logoRef.current?.startAnimation()}
               onMouseLeave={() => logoRef.current?.stopAnimation()}
+              onBlur={() => logoRef.current?.stopAnimation()}
             >
               <TurkishLiraIcon ref={logoRef} size={20} />
             </Link>
@@ -310,14 +328,10 @@ export default function Navbar() {
                 fontFamily: "var(--font-sans)",
                 transition: "border-color 0.15s, color 0.15s",
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = "var(--c-text-2)";
-                e.currentTarget.style.borderColor = "var(--c-text-3)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = "var(--c-text-3)";
-                e.currentTarget.style.borderColor = "var(--c-border)";
-              }}
+              onMouseEnter={highlightSearch}
+              onFocus={highlightSearch}
+              onMouseLeave={unhighlightSearch}
+              onBlur={unhighlightSearch}
             >
               <Search size={14} />
               <span className="hidden lg:inline">Search</span>

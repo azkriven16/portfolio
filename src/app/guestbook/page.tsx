@@ -33,7 +33,7 @@ export default async function GuestbookPage({
     <main className="max-w-2xl mx-auto px-6 pt-16 pb-32">
       <div className="pt-8">
         <Link href="/" style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--c-text-4)", letterSpacing: "0.08em" }}
-          className="hover:!text-[var(--c-text-2)] transition-colors duration-150 mb-8 inline-block">
+          className="hover:!text-[var(--c-text-2)] focus-visible:!text-[var(--c-text-2)] transition-colors duration-150 mb-8 inline-block">
           ← back
         </Link>
 
@@ -84,7 +84,7 @@ export default async function GuestbookPage({
                 <Link
                   href={page - 1 === 1 ? "/guestbook" : `/guestbook?page=${page - 1}`}
                   style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--c-text-3)", letterSpacing: "0.04em" }}
-                  className="hover:!text-[var(--c-text-2)] transition-colors duration-150"
+                  className="hover:!text-[var(--c-text-2)] focus-visible:!text-[var(--c-text-2)] transition-colors duration-150"
                 >
                   ← newer
                 </Link>
@@ -95,7 +95,7 @@ export default async function GuestbookPage({
                 <Link
                   href={`/guestbook?page=${page + 1}`}
                   style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--c-text-3)", letterSpacing: "0.04em" }}
-                  className="hover:!text-[var(--c-text-2)] transition-colors duration-150"
+                  className="hover:!text-[var(--c-text-2)] focus-visible:!text-[var(--c-text-2)] transition-colors duration-150"
                 >
                   older →
                 </Link>

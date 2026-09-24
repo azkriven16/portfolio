@@ -19,6 +19,14 @@ function IconLink({
   >;
 }) {
   const ref = useRef<AnimHandle>(null);
+  const enter = (e: React.SyntheticEvent<HTMLElement>) => {
+    e.currentTarget.style.color = "var(--c-text-2)";
+    ref.current?.startAnimation();
+  };
+  const leave = (e: React.SyntheticEvent<HTMLElement>) => {
+    e.currentTarget.style.color = "var(--c-text-4)";
+    ref.current?.stopAnimation();
+  };
   return (
     <a
       href={href}
@@ -30,14 +38,10 @@ function IconLink({
         transition: "color 0.15s",
         display: "flex",
       }}
-      onMouseEnter={(e) => {
-        (e.currentTarget as HTMLElement).style.color = "var(--c-text-2)";
-        ref.current?.startAnimation();
-      }}
-      onMouseLeave={(e) => {
-        (e.currentTarget as HTMLElement).style.color = "var(--c-text-4)";
-        ref.current?.stopAnimation();
-      }}
+      onMouseEnter={enter}
+      onFocus={enter}
+      onMouseLeave={leave}
+      onBlur={leave}
     >
       <Icon ref={ref} size={14} />
     </a>
@@ -67,7 +71,13 @@ export default function Projects() {
                   onMouseEnter={(e) =>
                     (e.currentTarget.style.color = "var(--c-text-3)")
                   }
+                  onFocus={(e) =>
+                    (e.currentTarget.style.color = "var(--c-text-3)")
+                  }
                   onMouseLeave={(e) =>
+                    (e.currentTarget.style.color = "var(--c-text)")
+                  }
+                  onBlur={(e) =>
                     (e.currentTarget.style.color = "var(--c-text)")
                   }
                 >
