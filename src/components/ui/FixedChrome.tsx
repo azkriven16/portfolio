@@ -258,21 +258,21 @@ export default function FixedChrome() {
           style={{
             ...MONO,
             fontSize: "0.48rem",
-            color: "var(--c-text-5)",
+            color: "var(--c-text-4)",
             textDecoration: "none",
             transition: "color 0.15s",
           }}
           onMouseEnter={(e) =>
-            (e.currentTarget.style.color = "var(--c-text-3)")
+            (e.currentTarget.style.color = "var(--c-text-2)")
           }
           onFocus={(e) =>
-            (e.currentTarget.style.color = "var(--c-text-3)")
+            (e.currentTarget.style.color = "var(--c-text-2)")
           }
           onMouseLeave={(e) =>
-            (e.currentTarget.style.color = "var(--c-text-5)")
+            (e.currentTarget.style.color = "var(--c-text-4)")
           }
           onBlur={(e) =>
-            (e.currentTarget.style.color = "var(--c-text-5)")
+            (e.currentTarget.style.color = "var(--c-text-4)")
           }
         >
           /sitemap.xml
