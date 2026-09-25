@@ -1,6 +1,6 @@
 # euger — personal portfolio
 
-Personal portfolio site built with Next.js 16, Tailwind CSS v4, and TypeScript. Features a dark-first design system, animated UI, a guestbook UI, and a blog.
+Personal portfolio site built with Next.js 16, Tailwind CSS v4, and TypeScript. Features a dark-first design system, animated UI, a Neon-backed guestbook, a contact form, and a blog.
 
 ## Stack
 
@@ -12,14 +12,20 @@ Personal portfolio site built with Next.js 16, Tailwind CSS v4, and TypeScript. 
 ## Features
 
 - Dark / light theme with CSS variable design tokens
-- Fixed chrome sidebar with live clock and GitHub activity
+- Fixed chrome sidebar with live clock and a 12-month GitHub contributions chart
+  (refreshed daily by the `update-stats` workflow into `src/data/stats.json`)
 - WebGL grain overlay via OGL
 - Command palette (⌘K / Ctrl+K)
 - Guestbook backed by Neon Postgres (`src/lib/db.ts`), with a honeypot field and
   a per-IP rate limit against spam
-- Static blog with inline code/link support and reading-time estimates, sourced
-  from `src/data/posts.ts`, plus an RSS feed at `/feed.xml`
-- Project pages with detail view
+- Static blog with inline code/link support, Shiki syntax highlighting (build time)
+  and reading-time estimates, sourced from `src/data/posts.ts`, plus an RSS feed
+  at `/feed.xml`
+- Contact form sending via Resend, with the same honeypot + rate limit
+- Projects list with screenshot thumbnails and technology filters (`?tag=`), plus
+  a detail page per project
+- `/side-projects` and `/uses` pages
+- Generated OpenGraph images for every route
 - Vercel Analytics + Speed Insights
 - `Person`/`WebSite` JSON-LD for richer search results
 - Custom mobile tab bar with anchor-based active detection
