@@ -2,7 +2,7 @@
 
 Source of truth is the checkbox in each file. Update it when an item lands.
 
-- `[ ]` open  `[~]` in progress  `[x]` done  `[?]` blocked, needs an answer from Euger
+- `[ ]` open  `[~]` in progress  `[x]` done  `[-]` skipped  `[?]` blocked, needs an answer from Euger
 
 | File | Scope |
 | --- | --- |
@@ -16,9 +16,10 @@ Audit date: 2026-09-19. Verified with `tsc --noEmit`, `next build`, and a `curl`
 
 ## Status (updated 2026-09-25)
 
-01–04 are done. What's left is optional:
+Everything is done except one optional content check:
 
 | Item | State | Note |
 | --- | --- | --- |
-| F14 PWA manifest | open | Suggest skipping |
-| M10, F12 content | Euger | Review side-project wording; add hardware to `/uses` |
+| M10 side-project wording | Euger | Review which projects to feature and the copy in `src/data/side-projects.ts` |
+
+Skipped by decision: F14 (PWA manifest).
