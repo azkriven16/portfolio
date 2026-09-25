@@ -16,10 +16,9 @@ Audit date: 2026-09-19. Verified with `tsc --noEmit`, `next build`, and a `curl`
 
 ## Status (updated 2026-09-25)
 
-01–04 are done except **B9** (Vercel previews fail, deferred). What's left is optional:
+01–04 are done. What's left is optional:
 
 | Item | State | Note |
 | --- | --- | --- |
-| B9 Vercel previews | open | Needs old Neon `preview/*` branches deleted (steps in 01) |
 | F14 PWA manifest | open | Suggest skipping |
 | M10, F12 content | Euger | Review side-project wording; add hardware to `/uses` |
