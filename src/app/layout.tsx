@@ -25,10 +25,10 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     url: "/",
   },
+  // Large card for the 1200x630 generated images. Title, description and image
+  // fall back to each page's OpenGraph tags, so they aren't repeated here.
   twitter: {
-    card: "summary",
-    title: SITE_NAME,
-    description: SITE_DESCRIPTION,
+    card: "summary_large_image",
   },
 };
 

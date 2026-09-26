@@ -294,7 +294,8 @@ export default function FixedChrome() {
         >
           {"// Yare yare daze..."}
         </span>
-        <Link
+        {/* Plain <a>: next/link would prefetch this XML file as a page and 404. */}
+        <a
           href="/sitemap.xml"
           style={{
             ...MONO,
@@ -317,7 +318,7 @@ export default function FixedChrome() {
           }
         >
           /sitemap.xml
-        </Link>
+        </a>
       </div>
 
       {/* Divider */}

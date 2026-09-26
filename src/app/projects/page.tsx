@@ -1,13 +1,15 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/metadata";
 import { Suspense } from "react";
 import { projects } from "@/data/projects";
 import ProjectList, { ProjectListView } from "./ProjectList";
 
-export const metadata: Metadata = {
-  title: "Projects — Euger Bonete Jr",
+export const metadata: Metadata = pageMetadata({
+  title: "Projects",
   description: "Client work and products I've built with React, Next.js and TypeScript.",
-};
+  path: "/projects",
+});
 
 export default function ProjectsPage() {
   return (

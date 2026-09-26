@@ -1,13 +1,17 @@
 import Link from "next/link";
 import { posts, readingTime } from "@/data/posts";
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/metadata";
+
+const base = pageMetadata({
+  title: "Blog",
+  description: "Thoughts on web development, React, and building things.",
+  path: "/blog",
+});
 
 export const metadata: Metadata = {
-  title: "Blog — Euger Bonete Jr",
-  description: "Thoughts on web development, React, and building things.",
-  alternates: {
-    types: { "application/rss+xml": "/feed.xml" },
-  },
+  ...base,
+  alternates: { ...base.alternates, types: { "application/rss+xml": "/feed.xml" } },
 };
 
 function formatDate(dateStr: string) {
