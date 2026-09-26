@@ -14,12 +14,6 @@ Source of truth is the checkbox in each file. Update it when an item lands.
 
 Audit date: 2026-09-19. Verified with `tsc --noEmit`, `next build`, and a `curl` sweep of every route.
 
-## Status (updated 2026-09-25)
+## Status (updated 2026-09-26)
 
-Everything is done except one optional content check:
-
-| Item | State | Note |
-| --- | --- | --- |
-| M10 side-project wording | Euger | Review which projects to feature and the copy in `src/data/side-projects.ts` |
-
-Skipped by decision: F14 (PWA manifest).
+Every item is done. Skipped by decision: F14 (PWA manifest).
