@@ -20,14 +20,6 @@ export const sideProjects: SideProject[] = [
     live: "https://mihon-clone.vercel.app",
   },
   {
-    title: "eugui",
-    description:
-      "A shadcn-style CLI for distributing React component libraries via copy-paste. Run one command and own the code — no runtime dependency.",
-    tech: ["TypeScript", "Node.js", "CLI"],
-    github: "https://github.com/azkriven16/eugui",
-    live: null,
-  },
-  {
     title: "CVSwift",
     description: "Free, open-source AI-powered resume builder and auditor.",
     tech: ["TypeScript", "Supabase", "OpenRouter"],
