@@ -9,14 +9,8 @@ export interface SideProject {
 
 // Sourced from github.com/azkriven16 — repo READMEs and descriptions.
 // `live` is only set where the deployed site responded when this list was written.
+// Ordered strongest first: live demos and current work ahead of older repos.
 export const sideProjects: SideProject[] = [
-  {
-    title: "Animinji",
-    description: "Full-stack anime streaming platform for browsing and watching anime.",
-    tech: ["Next.js", "shadcn/ui", "Tailwind CSS", "Supabase", "tRPC", "TanStack Query"],
-    github: "https://github.com/azkriven16/animinji",
-    live: null,
-  },
   {
     title: "Mihon Clone",
     description:
@@ -34,6 +28,14 @@ export const sideProjects: SideProject[] = [
     live: null,
   },
   {
+    title: "CVSwift",
+    description: "Free, open-source AI-powered resume builder and auditor.",
+    tech: ["TypeScript", "Supabase", "OpenRouter"],
+    github: "https://github.com/azkriven16/cvswift",
+    live: null,
+    status: "in-progress",
+  },
+  {
     title: "Paste2Image",
     description: "Paste clipboard content, preview it, and download it as a PNG.",
     tech: ["Next.js", "shadcn/ui", "Tailwind CSS", "html2canvas"],
@@ -49,11 +51,10 @@ export const sideProjects: SideProject[] = [
     live: null,
   },
   {
-    title: "CVSwift",
-    description: "Free, open-source AI-powered resume builder and auditor.",
-    tech: ["TypeScript", "Supabase", "OpenRouter"],
-    github: "https://github.com/azkriven16/cvswift",
+    title: "Animinji",
+    description: "Full-stack anime streaming platform for browsing and watching anime.",
+    tech: ["Next.js", "shadcn/ui", "Tailwind CSS", "Supabase", "tRPC", "TanStack Query"],
+    github: "https://github.com/azkriven16/animinji",
     live: null,
-    status: "in-progress",
   },
 ];
