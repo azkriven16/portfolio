@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/metadata";
 import { projects, projectSlug } from "@/data/projects";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -17,11 +18,12 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
   const { slug } = await params;
   const project = projects.find((p) => projectSlug(p) === slug);
   if (!project) return {};
-  return {
-    title: `${project.title} — Euger Bonete Jr`,
+  return pageMetadata({
+    title: project.title,
     description: project.description,
-    openGraph: { title: project.title, description: project.description, type: "article" },
-  };
+    path: `/projects/${slug}`,
+    type: "article",
+  });
 }
 
 export default async function ProjectPage({ params }: ProjectPageProps) {

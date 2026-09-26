@@ -1,11 +1,13 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/metadata";
 import { sideProjects } from "@/data/side-projects";
 
-export const metadata: Metadata = {
-  title: "Side Projects — Euger Bonete Jr",
+export const metadata: Metadata = pageMetadata({
+  title: "Side Projects",
   description: "Things I build for fun: apps, tools and experiments outside client work.",
-};
+  path: "/side-projects",
+});
 
 const LINK: React.CSSProperties = {
   fontFamily: "var(--font-mono)",

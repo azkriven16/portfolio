@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { posts, readingTime } from "@/data/posts";
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/metadata";
 import InlineMarkdown from "@/components/ui/InlineMarkdown";
 import CodeBlock from "@/components/ui/CodeBlock";
 import { parseBlocks } from "@/lib/markdown";
@@ -14,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const post = posts.find((p) => p.slug === slug);
   if (!post) return {};
-  return { title: `${post.title} — Euger Bonete Jr`, description: post.description };
+  return pageMetadata({ title: post.title, description: post.description, path: `/blog/${slug}`, type: "article" });
 }
 
 function formatDate(dateStr: string) {

@@ -2,6 +2,10 @@ import Bio from "@/components/sections/Bio";
 import Projects from "@/components/sections/Projects";
 import Experience from "@/components/sections/Experience";
 import Contact from "@/components/sections/Contact";
+import type { Metadata } from "next";
+
+// Title, description and OpenGraph come from the root layout.
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 export default function Home() {
   return (

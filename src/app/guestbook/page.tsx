@@ -1,8 +1,16 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/metadata";
 import { getGuestbookEntries, getGuestbookCount, GUESTBOOK_PAGE_SIZE } from "@/lib/db";
 import { GuestbookForm } from "./GuestbookForm";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Guestbook",
+  description: "Leave a message and say hi.",
+  path: "/guestbook",
+});
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("en-US", {
